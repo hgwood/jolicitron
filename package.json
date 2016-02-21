@@ -1,0 +1,21 @@
+{
+  "name": "hash-code-parser",
+  "version": "1.0.0",
+  "description": "A generic parser for Google Hash Code problem inputs",
+  "main": "index.js",
+  "scripts": {
+    "test": "tape test/real.js | faucet"
+  },
+  "keywords": [],
+  "author": "Hugo Wood <hx4.5@free.fr>",
+  "license": "MIT",
+  "dependencies": {
+    "debug": "^2.2.0",
+    "lodash": "^4.5.0"
+  },
+  "devDependencies": {
+    "eslint": "^2.2.0",
+    "faucet": "0.0.1",
+    "tape": "^4.4.0"
+  }
+}
