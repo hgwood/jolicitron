@@ -2,9 +2,9 @@
   "name": "hash-code-parser",
   "version": "1.0.0",
   "description": "A generic parser for Google Hash Code problem inputs",
-  "main": "index.js",
+  "main": "bucket.js",
   "scripts": {
-    "test": "tape test/real.js | faucet"
+    "test": "tape examples/*/*.test.js | faucet"
   },
   "keywords": [],
   "author": "Hugo Wood <hx4.5@free.fr>",

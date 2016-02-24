@@ -1,0 +1,20 @@
+{
+  "nrows": 100,
+  "ncols": 100,
+  "ndrones": 3,
+  "nturns": 50,
+  "maxLoad": 500,
+  "nitemTypes": 3,
+  "weights": [100, 5, 450],
+  "nwarehouses": 2,
+  "warehouses": [
+    {"x": 0, "y": 0, "items": [5, 1, 0]},
+    {"x": 5, "y": 5, "items": [0, 10, 2]}
+  ],
+  "norders": 3,
+  "orders": [
+    {"x": 1, "y": 1, "nitems": 2, "items": [2, 0]},
+    {"x": 3, "y": 3, "nitems": 3, "items": [0, 0, 0]},
+    {"x": 5, "y": 6, "nitems": 1, "items": [2]}
+  ]
+}
