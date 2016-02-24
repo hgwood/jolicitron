@@ -4,7 +4,8 @@
   "description": "A generic parser for Google Hash Code problem inputs",
   "main": "bucket.js",
   "scripts": {
-    "test": "tape examples/*/*.test.js | faucet"
+    "test": "tape examples/*/*.test.js | faucet",
+    "lint": "eslint *.js examples/*/*.js"
   },
   "keywords": [],
   "author": "Hugo Wood <hx4.5@free.fr>",

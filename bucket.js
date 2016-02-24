@@ -2,15 +2,16 @@
 
 const _ = require("lodash")
 const assert = require("assert")
+const debug = require("debug")("parser")
 
 module.exports = _.assign({buildParser}, parserify({
-  int, number, array, object, pair, merge
+  int, number, array, object, pair, merge,
 }))
 
 function parserify(parsers) {
   return _.mapValues(parsers, parser => {
     return (a, b, c, d, e, f) => str => {
-      console.error(parser.name, JSON.stringify(str.split(/\n|\r\n/)))
+      debug(parser.name, JSON.stringify(str.split(/\n|\r\n/)))
       return parser(str, a, b, c, d, e, f)
     }
   })
@@ -62,7 +63,7 @@ function merge(str, parsers) {
 }
 
 function variable(name, value) {
-  console.error("variable", name, value)
+  debug("variable", name, value)
   if (_.isUndefined(value)) return variable[name]
   else return variable[name] = value
 }

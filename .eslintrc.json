@@ -1,7 +1,15 @@
 {
+  "extends": "eslint:recommended",
   "ecmaVersion": 6,
   "env": {
     "node": true,
     "es6": true
+  },
+  "rules": {
+    "comma-dangle": [1, "always-multiline"],
+
+    "eol-last": 1,
+    "quotes": [1, "double", "avoid-escape"],
+    "semi": [1, "never"]
   }
 }
