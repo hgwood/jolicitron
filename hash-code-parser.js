@@ -2,9 +2,9 @@
 
 const _ = require("lodash")
 const assert = require("assert")
-const debug = require("debug")("parser")
+const debug = require("debug")("hash-code-parser")
 
-module.exports = _.assign({buildParser}, parserify({
+module.exports = _.assign({build}, parserify({
   int, number, array, object, pair, merge,
 }))
 
@@ -17,7 +17,7 @@ function parserify(parsers) {
   })
 }
 
-function buildParser(builder) {
+function build(builder) {
   return builder(module.exports)
 }
 

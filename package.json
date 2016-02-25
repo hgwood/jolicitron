@@ -2,7 +2,7 @@
   "name": "hash-code-parser",
   "version": "1.0.0",
   "description": "A generic parser for Google Hash Code problem inputs",
-  "main": "bucket.js",
+  "main": "hash-code-parser.js",
   "scripts": {
     "test": "tape examples/*/*.test.js | faucet",
     "lint": "eslint *.js examples/*/*.js"

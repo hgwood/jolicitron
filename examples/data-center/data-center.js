@@ -1,10 +1,10 @@
 "use strict"
 
-module.exports = require("../..").buildParser(b =>
-  b.merge([
-    b.object(["nrows", "nslots", "nunavailables", "npools", "nservers"], b.int()),
-    b.pair("unavailables", b.array("nunavailables", 
-      b.object(["x", "y"], b.int()))),
-    b.pair("servers", b.array("nservers", 
-      b.object(["size", "capacity"], b.int()))),
+module.exports = require("../..").build(p =>
+  p.merge([
+    p.object(["nrows", "nslots", "nunavailables", "npools", "nservers"], p.int()),
+    p.pair("unavailables", p.array("nunavailables", 
+      p.object(["x", "y"], p.int()))),
+    p.pair("servers", p.array("nservers", 
+      p.object(["size", "capacity"], p.int()))),
   ]))

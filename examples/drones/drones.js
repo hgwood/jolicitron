@@ -1,19 +1,19 @@
 "use strict"
 
-module.exports = require("../..").buildParser(b =>
-  b.merge([
-    b.object(["nrows", "ncols", "ndrones", "nturns", "maxLoad"], b.int()),
-    b.pair("nitemTypes", b.int()),
-    b.pair("weights", b.array("nitemTypes", b.int())),
-    b.pair("nwarehouses", b.int()),
-    b.pair("warehouses", b.array("nwarehouses", b.merge([
-      b.object(["x", "y"], b.int()),
-      b.pair("items", b.array("nitemTypes", b.int())),
+module.exports = require("../..").build(p =>
+  p.merge([
+    p.object(["nrows", "ncols", "ndrones", "nturns", "maxLoad"], p.int()),
+    p.pair("nitemTypes", p.int()),
+    p.pair("weights", p.array("nitemTypes", p.int())),
+    p.pair("nwarehouses", p.int()),
+    p.pair("warehouses", p.array("nwarehouses", p.merge([
+      p.object(["x", "y"], p.int()),
+      p.pair("items", p.array("nitemTypes", p.int())),
     ]))),
-    b.pair("norders", b.int()),
-    b.pair("orders", b.array("norders", b.merge([
-      b.object(["x", "y"], b.int()),
-      b.pair("nitems", b.int()),
-      b.pair("items", b.array("nitems", b.int())),
+    p.pair("norders", p.int()),
+    p.pair("orders", p.array("norders", p.merge([
+      p.object(["x", "y"], p.int()),
+      p.pair("nitems", p.int()),
+      p.pair("items", p.array("nitems", p.int())),
     ]))),
   ]))
