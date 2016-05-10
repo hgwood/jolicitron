@@ -1,9 +1,7 @@
 {
   "nrows": 2,
   "nslots": 5,
-  "nunavailables": 1,
   "npools": 2,
-  "nservers": 5,
   "unavailables": [
     {"x": 0, "y": 0}
   ],

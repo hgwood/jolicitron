@@ -6,10 +6,15 @@
     "es6": true
   },
   "rules": {
-    "comma-dangle": [1, "always-multiline"],
+    // Possible Errors http://eslint.org/docs/rules/#possible-errors
+    "comma-dangle": ["warn", "always-multiline"],
+    
+    // Variables http://eslint.org/docs/rules/#variables
+    "no-unused-vars": "warn",
 
-    "eol-last": 1,
-    "quotes": [1, "double", "avoid-escape"],
-    "semi": [1, "never"]
+    // Stylistic Issues http://eslint.org/docs/rules/#stylistic-issues
+    "eol-last": "warn",
+    "quotes": ["warn", "double", "avoid-escape"],
+    "semi": ["warn", "never"]
   }
 }

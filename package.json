@@ -1,8 +1,8 @@
 {
-  "name": "hash-code-parser",
+  "name": "jolicitron",
   "version": "1.0.0",
   "description": "A generic parser for Google Hash Code problem inputs",
-  "main": "hash-code-parser.js",
+  "main": "jolicitron.js",
   "scripts": {
     "test": "tape test/*.test.js | faucet",
     "lint": "eslint *.js test/*.js examples/*/*.js"
@@ -11,11 +11,10 @@
   "author": "Hugo Wood <hx4.5@free.fr>",
   "license": "MIT",
   "dependencies": {
-    "debug": "^2.2.0",
     "lodash": "^4.5.0"
   },
   "devDependencies": {
-    "eslint": "^2.2.0",
+    "eslint": "^2.5.2",
     "faucet": "0.0.1",
     "tape": "^4.4.0"
   },

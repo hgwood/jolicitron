@@ -1,7 +1,6 @@
 "use strict"
 
 const test = require("tape")
-const assert = require("assert")
 const fs = require("fs")
 const path = require("path")
 const _ = require("lodash")
@@ -15,7 +14,7 @@ fs.readdirSync(examplesDirectory())
     const output = require(exampleDirectory(`${exampleName}.out`))
     const parser = require(exampleDirectory(`${exampleName}`))
     const {parsedValue, remaining} = parser(input)
-    assert(_.isEmpty(remaining))
-    assert.deepEqual(parsedValue, output)
+    t.ok(_.isEmpty(remaining))
+    t.deepEqual(parsedValue, output)
     t.end()
   }))
