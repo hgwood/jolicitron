@@ -2,7 +2,7 @@
 
 module.exports = require("../..").build(({push, n}) => [
   "nrows", "ncols", "ndrones", "nturns", "maxLoad",
-  push.named("nitemTypes"),
+  push.usingName("nitemTypes"),
   n("weights"),
   push,
   n("warehouses", "x", "y", n.usingName("nitemTypes", "items")),

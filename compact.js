@@ -12,7 +12,7 @@ function build(builder) {
   const n = feed(keyArrayPair, dequeue)
   n.usingName = (name, ...args) => feed(keyArrayPair, get(name))(...args)
   const push = extract(int(), enqueue)
-  push.named = name => extract(int(), set(name), enqueue)
+  push.usingName = name => extract(int(), set(name), enqueue)
   return fromKeysOrParsers(builder({n, push}))
 }
 
