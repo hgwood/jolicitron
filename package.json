@@ -1,15 +1,23 @@
 {
   "name": "jolicitron",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A generic parser for Google Hash Code problem inputs",
+  "keywords": ["hash code", "parser"],
+  "author": "Hugo Wood <hx4.5@free.fr>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hgwood/jolicitron.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hgwood/jolicitron/issues"
+  },
+  "homepage": "https://github.com/hgwood/jolicitron",
   "main": "jolicitron.js",
   "scripts": {
     "test": "tape test/*.test.js | faucet",
     "lint": "eslint *.js test/*.js examples/*/*.js"
   },
-  "keywords": [],
-  "author": "Hugo Wood <hx4.5@free.fr>",
-  "license": "MIT",
   "dependencies": {
     "lodash": "^4.5.0"
   },

@@ -149,3 +149,10 @@ assert.deepEqual(parsedValue, {
 })
 assert.equal(remaining, "15 16")
 ```
+
+## Changelog
+
+- 1.0.1
+  - package.json/readme update
+- 1.0.0
+  - initial release
