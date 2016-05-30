@@ -4,6 +4,7 @@
  * 
  * It shows how to use jolicitron to parse inputs for the data center problem
  * from the Google Hash Code 2015 qualification round.
+ * https://hashcode.withgoogle.com/2015/tasks/hashcode2015_qualification_task.pdf
  */
 
 const jolicitron = require("jolicitron")
@@ -11,7 +12,7 @@ const jolicitron = require("jolicitron")
 const parser = jolicitron.build(({push, n}) => [
   "nrows", "nslots", push, "npools", push,
   n("unavailables", "x", "y"),
-  n("servers", "size", "capacity")
+  n("servers", "size", "capacity"),
 ])
 
 const input = `2 5 1 2 5
