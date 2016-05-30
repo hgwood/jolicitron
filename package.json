@@ -14,6 +14,7 @@
   },
   "homepage": "https://github.com/hgwood/jolicitron",
   "main": "jolicitron.js",
+  "tonicExampleFilename": "examples/data-center/data-center.tonic.js",
   "scripts": {
     "test": "tape test/*.test.js | faucet",
     "lint": "eslint *.js test/*.js examples/*/*.js"
