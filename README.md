@@ -152,6 +152,9 @@ assert.equal(remaining, "15 16")
 
 ## Changelog
 
+- 1.0.2
+  - package.json/readme update
+  - example for https://tonicdev.com/npm/jolicitron
 - 1.0.1
   - package.json/readme update
 - 1.0.0
