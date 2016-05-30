@@ -1,7 +1,7 @@
 {
   "name": "jolicitron",
   "version": "1.0.1",
-  "description": "A generic parser for Google Hash Code problem inputs",
+  "description": "A parser builder for Google Hash Code problem inputs",
   "keywords": ["google", "hash code", "parser"],
   "author": "Hugo Wood <hx4.5@free.fr>",
   "license": "MIT",
