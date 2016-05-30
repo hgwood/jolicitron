@@ -2,7 +2,7 @@
   "name": "jolicitron",
   "version": "1.0.1",
   "description": "A generic parser for Google Hash Code problem inputs",
-  "keywords": ["hash code", "parser"],
+  "keywords": ["google", "hash code", "parser"],
   "author": "Hugo Wood <hx4.5@free.fr>",
   "license": "MIT",
   "repository": {
