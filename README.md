@@ -2,8 +2,48 @@
 
 A library to quickly build parsers for Google Hash Code problem inputs.
 
+## How to use it
+
+Jolicitron is mainly about assigning names to integers. Hash Code problem
+inputs look like this:
+
+```
+1 2 3 4
+3
+4 5
+6 7
+8 9
+10 11 12
+```
+
+Using the problem statement, this can be made sense of, and it needs to be
+parsed into a data structure that has descriptive names. Here's how to do
+that with Jolicitron:
+
+```js
+const parser = jolicitron.build(({push, n}) => [
+  "one", "two", "three", "four",
+  push,
+  n("pairs", "x", "y"),
+  "ten", "eleven", "twelve"
+])
+const {parsedValue, remaining} = parser(input)
+```
+
+`parsedValue` is then equal to the following:
+
+```
+{
+  one: 1, two: 2, three: 3, four: 4,
+  pairs: [{x: 4, y: 5}, {x: 6, y: 7}, {x: 8, y: 9}],
+  ten: 10, eleven: 11, twelve: 12,
+}
+```
+
+## Real-world Hash Code examples
+
 Check out the [examples](https://github.com/hgwood/hash-code-parser/tree/master/examples)
-to understand how to use it on passed problems.
+to understand how to use Jolicitron on passed problems.
 
 ## Requirements
 
