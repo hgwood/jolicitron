@@ -2,7 +2,11 @@
   "name": "jolicitron",
   "version": "1.0.2",
   "description": "A parser builder for Google Hash Code problem inputs",
-  "keywords": ["google", "hash code", "parser"],
+  "keywords": [
+    "google",
+    "hash code",
+    "parser"
+  ],
   "author": "Hugo Wood <hx4.5@free.fr>",
   "license": "MIT",
   "repository": {
@@ -17,6 +21,7 @@
   "tonicExampleFilename": "examples/data-center/data-center.tonic.js",
   "scripts": {
     "test": "tape test/*.test.js | faucet",
+    "cover": "istanbul cover node_modules/tape/bin/tape test/*.js",
     "lint": "eslint *.js test/*.js examples/*/*.js"
   },
   "dependencies": {
@@ -24,10 +29,11 @@
   },
   "devDependencies": {
     "eslint": "^2.5.2",
-    "faucet": "0.0.1",
+    "faucet": "^0.0.1",
+    "istanbul": "^0.4.3",
     "tape": "^4.4.0"
   },
-  "engines" : {
-    "node" : ">=6.0.0"
+  "engines": {
+    "node": ">=6.0.0"
   }
 }
