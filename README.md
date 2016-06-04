@@ -195,6 +195,15 @@ assert.deepEqual(parsedValue, {
 assert.equal(remaining, "15 16")
 ```
 
+### Options for `n`
+
+`n` can be given options object as a first parameter: `n("things", {...}, "a", "b", ...)`.
+
+Possible options are:
+- `indices` (boolean, defaults to `false`): elements of the parsed array will
+have an `index` property denoting their order. This can be useful as indices
+are known to often play the role of IDs in Hash Code problems.
+
 ## Changelog
 
 - 1.0.2

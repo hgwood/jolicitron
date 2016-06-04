@@ -23,10 +23,16 @@ function number(str) {
   return {parsedValue, remaining}
 }
 
-function array(str, length, itemParser) {
+function array(str, length, itemParser, {indices} = {indices: false}) {
   assert(_.isInteger(length), `array(): expected parameter 'length' to be an integer but found ${length}`)
   const parsers = _.times(length, _.constant(itemParser))
-  return tuple(str, parsers)
+  const {parsedValue, remaining} = tuple(str, parsers)
+  return {
+    parsedValue: indices ? _.map(parsedValue, (parsedItem, index) => {
+      return _.assign({index}, parsedItem)
+    }) : parsedValue,
+    remaining,
+  }
 }
 
 function object(str, keys, valueParser) {

@@ -16,8 +16,12 @@ function build(builder) {
   return fromKeysOrParsers(builder({n, push}))
 }
 
-function keyArrayPair(length, storageKey, ...keysOrParsers) {
-  return object([storageKey], array(length, fromKeysOrParsers(keysOrParsers)))
+function keyArrayPair(length, storageKey, options, ...keysOrParsers) {
+  if (!_.isObjectLike(options)) {
+    if (options || keysOrParsers.length > 0) keysOrParsers.unshift(options)
+    options = {indices: false}
+  }
+  return object([storageKey], array(length, fromKeysOrParsers(keysOrParsers), options))
 }
 
 function fromKeysOrParsers(keysOrParsers) {
