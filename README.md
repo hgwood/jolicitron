@@ -206,6 +206,8 @@ are known to often play the role of IDs in Hash Code problems.
 
 ## Changelog
 
+- 1.1.0
+  - `indices` option for `n`
 - 1.0.2
   - package.json/readme update
   - example for https://tonicdev.com/npm/jolicitron
