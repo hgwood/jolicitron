@@ -101,11 +101,11 @@ assert.deepEqual(parsedValue, {a: 41, b: 99})
 assert.equal(remaining, "105")
 ```
 
-`n` and `save` are properties from the object passed to the function passed to
-build.
+`save` and `n` are the parameters passed to the function passed to
+jolicitron.
 
 ```js
-jolicitron(({n, save}) => [...])
+jolicitron((save, n) => [...])
 ```
 
 They are used to handle collections of things in the input.
