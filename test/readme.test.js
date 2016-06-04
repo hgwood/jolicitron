@@ -4,7 +4,7 @@ const test = require("tape")
 const jolicitron = require("..")
 
 test("string parsers", t => {
-  const parser = jolicitron.build(() => ["a", "b"])
+  const parser = jolicitron(() => ["a", "b"])
   const {parsedValue, remaining} = parser("41 99 105")
   t.deepEqual(parsedValue, {a: 41, b: 99})
   t.equal(remaining, "105")
@@ -12,7 +12,7 @@ test("string parsers", t => {
 })
 
 test("simple n parser", t => {
-  const parser = jolicitron.build((save, n) => [save, n("a")])
+  const parser = jolicitron((save, n) => [save, n("a")])
   const {parsedValue, remaining} = parser("3 1 2 3 4 5")
   t.deepEqual(parsedValue, {a: [1, 2, 3]})
   t.equal(remaining, "4 5")
@@ -20,7 +20,7 @@ test("simple n parser", t => {
 })
 
 test("object n parser", t => {
-  const parser = jolicitron.build((save, n) => [
+  const parser = jolicitron((save, n) => [
     save,
     n("x", "a", "b")])
   const {parsedValue, remaining} = parser("2 1 2 3 4 5")
@@ -30,7 +30,7 @@ test("object n parser", t => {
 })
 
 test("complex n parser", t => {
-  const parser = jolicitron.build((save, n) => [
+  const parser = jolicitron((save, n) => [
     save,
     n("x",
       "a",

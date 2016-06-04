@@ -4,7 +4,7 @@ const _ = require("lodash")
 const {int, array, object, merged} = require("./parsers")
 const {hash, queue} = require("./memory")
 
-module.exports = {build}
+module.exports = build
 
 function build(builder) {
   const {enqueue, dequeue} = queue()

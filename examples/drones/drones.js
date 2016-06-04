@@ -1,6 +1,6 @@
 "use strict"
 
-module.exports = require("../..").build((save, n) => [
+module.exports = require("../..")((save, n) => [
   "nrows", "ncols", "ndrones", "nturns", "maxLoad",
   save.usingName("nitemTypes"),
   n("weights"),

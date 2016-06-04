@@ -1,6 +1,6 @@
 "use strict"
 
-module.exports = require("../..").build((save, n) => [
+module.exports = require("../..")((save, n) => [
   "nturns",
   save,
   n("satellites", "latitude", "longitude", "velocity", "maximumOrientationChange", "maximumOrientation"),

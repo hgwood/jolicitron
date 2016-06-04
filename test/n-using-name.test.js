@@ -4,7 +4,7 @@ const test = require("tape")
 const jolicitron = require("..")
 
 test("n.usingName uses the given named variable as the length of the array", t => {
-  const {parsedValue} = jolicitron.build((save, n) => [
+  const {parsedValue} = jolicitron((save, n) => [
     save.usingName("name"),
     n.usingName("name", "value"),
   ])("2 5 8 7")

@@ -26,7 +26,9 @@ parsed into a data structure that has descriptive names. Here's how to do
 that with Jolicitron:
 
 ```js
-const parser = jolicitron.build((save, n) => [
+const jolicitron = require("jolicitron")
+
+const parser = jolicitron((save, n) => [
   "one", "two", "three", "four",
   save,
   n("pairs", "x", "y"),
@@ -68,7 +70,7 @@ For example, a parser that would expect two integers and return an array of
 these two integers would work like this:
 
 ```js
-const parser = jolicitron.build(...)
+const parser = jolicitron(...)
 const {parsedValue, remaining} = parser("41 99 105")
 assert.deepEqual(parsedValue, [41, 99])
 assert.equal(remaining, "105")
@@ -93,7 +95,7 @@ A string produces a parser that parses one integer, and returns an object that
 associates the string to that integer.
 
 ```js
-const parser = jolicitron.build(() => ["a", "b"])
+const parser = jolicitron(() => ["a", "b"])
 const {parsedValue, remaining} = parser("41 99 105")
 assert.deepEqual(parsedValue, {a: 41, b: 99})
 assert.equal(remaining, "105")
@@ -103,7 +105,7 @@ assert.equal(remaining, "105")
 build.
 
 ```js
-jolicitron.build(({n, save}) => [...])
+jolicitron(({n, save}) => [...])
 ```
 
 They are used to handle collections of things in the input.
@@ -125,7 +127,7 @@ array. To know exactly how many integer it should parse, `n` dequeues an
 integer from `save`'s queue and uses that.
 
 ```js
-const parser = jolicitron.build((save, n) => [save, n("a")])
+const parser = jolicitron((save, n) => [save, n("a")])
 const {parsedValue, remaining} = parser("3 1 2 3 4 5")
 assert.deepEqual(parsedValue, {a: [1, 2, 3]})
 assert.equal(remaining, "4 5")
@@ -134,7 +136,7 @@ assert.equal(remaining, "4 5")
 `n.usingName` lets you use a named integer instead.
 
 ```js
-const parser = jolicitron.build((save, n) => [
+const parser = jolicitron((save, n) => [
   save.usingName("i"),
   save,
   n.usingName("i", "a")
@@ -153,7 +155,7 @@ and the description of parsers seen before: strings, calls to `n` or calls to
 `save`.
 
 ```js
-const parser = jolicitron.build((save, n) => [
+const parser = jolicitron((save, n) => [
   save,
   n("x", "a", "b")
 ])
@@ -163,7 +165,7 @@ assert.equal(remaining, "5")
 ```
 
 ```js
-const parser = jolicitron.build((save, n) => [
+const parser = jolicitron((save, n) => [
   save,
   n("x",
     "a",
