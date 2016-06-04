@@ -26,9 +26,9 @@ parsed into a data structure that has descriptive names. Here's how to do
 that with Jolicitron:
 
 ```js
-const parser = jolicitron.build(({push, n}) => [
+const parser = jolicitron.build((save, n) => [
   "one", "two", "three", "four",
-  push,
+  save,
   n("pairs", "x", "y"),
   "ten", "eleven", "twelve"
 ])
@@ -86,7 +86,7 @@ expected to be an object, and all these objects are merged together (think
 
 A description for a parser in the array can be one of 3 things:
 - a string
-- `push` or a call to `push.usingName`
+- `save` or a call to `save.usingName`
 - a call to `n` or `n.usingName`
 
 A string produces a parser that parses one integer, and returns an object that
@@ -99,11 +99,11 @@ assert.deepEqual(parsedValue, {a: 41, b: 99})
 assert.equal(remaining, "105")
 ```
 
-`n` and `push` are properties from the object passed to the function passed to
+`n` and `save` are properties from the object passed to the function passed to
 build.
 
 ```js
-jolicitron.build(({n, push}) => [...])
+jolicitron.build(({n, save}) => [...])
 ```
 
 They are used to handle collections of things in the input.
@@ -111,21 +111,21 @@ They are used to handle collections of things in the input.
 Hash Code problem inputs often use the same pattern for collections. The
 length of the collection is given first, and then the collection itself.
 Sometimes the length and the collection are a little more apart. So a system
-to remember values and re-use them later as lengths is required. `push` is
+to remember values and re-use them later as lengths is required. `save` is
 the way to save values, and `n` is used to parse collections.
 
-`push` is a parser that parses one integer, and stores it in a queue. The
-integer is then available for later use with `n`. `push.usingName` is an
+`save` is a parser that parses one integer, and stores it in a queue. The
+integer is then available for later use with `n`. `save.usingName` is an
 alternative that allows to name the integer. This makes it available even
 after it has been dequeued.
 
 `n` is a function. It produces a parser that parses many integers into an
 array, then returns an object that associates the first parameter to that
 array. To know exactly how many integer it should parse, `n` dequeues an
-integer from `push`'s queue and uses that.
+integer from `save`'s queue and uses that.
 
 ```js
-const parser = jolicitron.build(({push, n}) => [push, n("a")])
+const parser = jolicitron.build((save, n) => [save, n("a")])
 const {parsedValue, remaining} = parser("3 1 2 3 4 5")
 assert.deepEqual(parsedValue, {a: [1, 2, 3]})
 assert.equal(remaining, "4 5")
@@ -134,9 +134,9 @@ assert.equal(remaining, "4 5")
 `n.usingName` lets you use a named integer instead.
 
 ```js
-const parser = jolicitron.build(({push, n}) => [
-  push.usingName("i"),
-  push,
+const parser = jolicitron.build((save, n) => [
+  save.usingName("i"),
+  save,
   n.usingName("i", "a")
 ])
 const {parsedValue, remaining} = parser("3 4 1 2 3 4 5")
@@ -150,11 +150,11 @@ unknown, respectively.
 `n` and `n.usingName` can take additional parameters. If those are present,
 they are used to describe how to parse each element of the resulting array,
 and the description of parsers seen before: strings, calls to `n` or calls to
-`push`.
+`save`.
 
 ```js
-const parser = jolicitron.build(({push, n}) => [
-  push,
+const parser = jolicitron.build((save, n) => [
+  save,
   n("x", "a", "b")
 ])
 const {parsedValue, remaining} = parser("3 1 2 3 4 5")
@@ -163,11 +163,11 @@ assert.equal(remaining, "5")
 ```
 
 ```js
-const parser = jolicitron.build(({push, n}) => [
-  push,
+const parser = jolicitron.build((save, n) => [
+  save,
   n("x",
     "a",
-    push,
+    save,
     n("b", "k", "l")),
   "z"
 ])

@@ -11,9 +11,9 @@ function build(builder) {
   const {get, set} = hash()
   const n = feed(keyArrayPair, dequeue)
   n.usingName = (name, ...args) => feed(keyArrayPair, get(name))(...args)
-  const push = extract(int(), enqueue)
-  push.usingName = name => extract(int(), set(name), enqueue)
-  return fromKeysOrParsers(builder({n, push}))
+  const save = extract(int(), enqueue)
+  save.usingName = name => extract(int(), set(name), enqueue)
+  return fromKeysOrParsers(builder(save, n))
 }
 
 function keyArrayPair(length, storageKey, options, ...keysOrParsers) {

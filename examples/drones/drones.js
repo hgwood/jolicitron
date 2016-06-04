@@ -1,11 +1,11 @@
 "use strict"
 
-module.exports = require("../..").build(({push, n}) => [
+module.exports = require("../..").build((save, n) => [
   "nrows", "ncols", "ndrones", "nturns", "maxLoad",
-  push.usingName("nitemTypes"),
+  save.usingName("nitemTypes"),
   n("weights"),
-  push,
+  save,
   n("warehouses", "x", "y", n.usingName("nitemTypes", "items")),
-  push,
-  n("orders", "x", "y", push, n("items")),
+  save,
+  n("orders", "x", "y", save, n("items")),
 ])
