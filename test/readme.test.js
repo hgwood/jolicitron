@@ -44,7 +44,7 @@ test("complex n parser", t => {
         a: 1,
         b: [
           {k: 3, l: 4},
-          {k: 5, l: 6}
+          {k: 5, l: 6},
         ],
       },
       {
@@ -52,7 +52,7 @@ test("complex n parser", t => {
         b: [
           {k: 8, l: 9},
           {k: 10, l: 11},
-          {k: 12, l: 13}
+          {k: 12, l: 13},
         ],
       },
     ],
