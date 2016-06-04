@@ -3,7 +3,7 @@
 const _ = require("lodash")
 const assert = require("assert")
 
-module.exports = parserify({int, number, array, object, merged, tuple})
+module.exports = parserify({int, array, object, merged, tuple})
 
 function parserify(parsers) {
   return _.mapValues(parsers, parser => (...args) => str => parser(str, ...args))
@@ -12,13 +12,6 @@ function parserify(parsers) {
 function int(str) {
   const parsedValue = parseInt(str)
   assert(_.isInteger(parsedValue), `expected int but found '${str}'`)
-  const remaining = str.substring(str.indexOf(parsedValue.toString()) + parsedValue.toString().length)
-  return {parsedValue, remaining}
-}
-
-function number(str) {
-  const parsedValue = parseFloat(str)
-  assert(!_.isNaN(parsedValue), `expected number but found '${str}'`)
   const remaining = str.substring(str.indexOf(parsedValue.toString()) + parsedValue.toString().length)
   return {parsedValue, remaining}
 }
