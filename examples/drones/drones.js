@@ -2,10 +2,10 @@
 
 module.exports = require("../..")((save, n) => [
   "nrows", "ncols", "ndrones", "nturns", "maxLoad",
-  save.usingName("nitemTypes"),
+  save("nitemTypes"),
   n("weights"),
-  save,
+  save(),
   n("warehouses", "x", "y", n.usingName("nitemTypes", "items")),
-  save,
-  n("orders", "x", "y", save, n("items")),
+  save(),
+  n("orders", "x", "y", save(), n("items")),
 ])

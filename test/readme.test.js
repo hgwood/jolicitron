@@ -12,7 +12,7 @@ test("string parsers", t => {
 })
 
 test("simple n parser", t => {
-  const parser = jolicitron((save, n) => [save, n("a")])
+  const parser = jolicitron((save, n) => [save(), n("a")])
   const {parsedValue, remaining} = parser("3 1 2 3 4 5")
   t.deepEqual(parsedValue, {a: [1, 2, 3]})
   t.equal(remaining, "4 5")
@@ -21,7 +21,7 @@ test("simple n parser", t => {
 
 test("object n parser", t => {
   const parser = jolicitron((save, n) => [
-    save,
+    save(),
     n("x", "a", "b")])
   const {parsedValue, remaining} = parser("2 1 2 3 4 5")
   t.deepEqual(parsedValue, {x: [{a: 1, b: 2}, {a: 3, b: 4}]})
@@ -31,10 +31,10 @@ test("object n parser", t => {
 
 test("complex n parser", t => {
   const parser = jolicitron((save, n) => [
-    save,
+    save(),
     n("x",
       "a",
-      save,
+      save(),
       n("b", "k", "l")),
     "z"])
   const {parsedValue, remaining} = parser("2 1 2 3 4 5 6 7 3 8 9 10 11 12 13 14 15 16")

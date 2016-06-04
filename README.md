@@ -30,7 +30,7 @@ const jolicitron = require("jolicitron")
 
 const parser = jolicitron((save, n) => [
   "one", "two", "three", "four",
-  save,
+  save(),
   n("pairs", "x", "y"),
   "ten", "eleven", "twelve"
 ])
@@ -88,7 +88,7 @@ expected to be an object, and all these objects are merged together (think
 
 A description for a parser in the array can be one of 3 things:
 - a string
-- `save` or a call to `save.usingName`
+- a call `save`
 - a call to `n` or `n.usingName`
 
 A string produces a parser that parses one integer, and returns an object that
@@ -116,18 +116,18 @@ Sometimes the length and the collection are a little more apart. So a system
 to remember values and re-use them later as lengths is required. `save` is
 the way to save values, and `n` is used to parse collections.
 
-`save` is a parser that parses one integer, and stores it in a queue. The
-integer is then available for later use with `n`. `save.usingName` is an
-alternative that allows to name the integer. This makes it available even
-after it has been dequeued.
+`save` is a function. It produces a parser that parses one integer, and
+stores it in a queue. The integer is then available for later use with `n`.
+`save` takes an optional parameter to name the integer. This makes it
+available even after it has been dequeued by `n`.
 
 `n` is a function. It produces a parser that parses many integers into an
-array, then returns an object that associates the first parameter to that
+array, then returns an object that associates its first parameter to that
 array. To know exactly how many integer it should parse, `n` dequeues an
-integer from `save`'s queue and uses that.
+integer from `save`'s queue and uses that. The integer is then thrown away.
 
 ```js
-const parser = jolicitron((save, n) => [save, n("a")])
+const parser = jolicitron((save, n) => [save(), n("a")])
 const {parsedValue, remaining} = parser("3 1 2 3 4 5")
 assert.deepEqual(parsedValue, {a: [1, 2, 3]})
 assert.equal(remaining, "4 5")
@@ -137,8 +137,8 @@ assert.equal(remaining, "4 5")
 
 ```js
 const parser = jolicitron((save, n) => [
-  save.usingName("i"),
-  save,
+  save("i"),
+  save(),
   n.usingName("i", "a")
 ])
 const {parsedValue, remaining} = parser("3 4 1 2 3 4 5")
@@ -156,7 +156,7 @@ and the description of parsers seen before: strings, calls to `n` or calls to
 
 ```js
 const parser = jolicitron((save, n) => [
-  save,
+  save(),
   n("x", "a", "b")
 ])
 const {parsedValue, remaining} = parser("3 1 2 3 4 5")
@@ -166,10 +166,10 @@ assert.equal(remaining, "5")
 
 ```js
 const parser = jolicitron((save, n) => [
-  save,
+  save(),
   n("x",
     "a",
-    save,
+    save(),
     n("b", "k", "l")),
   "z"
 ])

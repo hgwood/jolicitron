@@ -2,11 +2,11 @@
 
 module.exports = require("../..")((save, n) => [
   "nturns",
-  save,
+  save(),
   n("satellites", "latitude", "longitude", "velocity", "maximumOrientationChange", "maximumOrientation"),
-  save,
+  save(),
   n("imageCollections",
-    "value", save, save,
+    "value", save(), save(),
     n("locations", "latitude", "longitude"),
     n("timeRanges", "start", "end")),
 ])
