@@ -5,7 +5,7 @@ module.exports = require("../..")((save, n) => [
   save("nitemTypes"),
   n("weights"),
   save(),
-  n("warehouses", "x", "y", n.usingName("nitemTypes", "items")),
+  n("warehouses", "x", "y", n("items", {length: "nitemTypes"})),
   save(),
   n("orders", "x", "y", save(), n("items")),
 ])

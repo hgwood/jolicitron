@@ -9,18 +9,23 @@ module.exports = build
 function build(builder) {
   const {enqueue, dequeue} = queue()
   const {get, set} = hash()
-  const n = feed(keyArrayPair, dequeue)
-  n.usingName = (name, ...args) => feed(keyArrayPair, get(name))(...args)
+  const n = _.partial(deferredKeyArrayPair, name => name ? get(name)() : dequeue())
   const save = name => extract(int(), name ? set(name) : _.noop, enqueue)
   return fromKeysOrParsers(builder(save, n))
 }
 
-function keyArrayPair(length, storageKey, options, ...keysOrParsers) {
-  if (!_.isObjectLike(options)) {
+function deferredKeyArrayPair(lengthSupplier, storageKey, options, ...keysOrParsers) {
+  if (!_.isObjectLike(options)) { // if no options were provided
     if (options || keysOrParsers.length > 0) keysOrParsers.unshift(options)
     options = {indices: false}
   }
-  return object([storageKey], array(length, fromKeysOrParsers(keysOrParsers), options))
+  const parser = fromKeysOrParsers(keysOrParsers)
+  const length = () => lengthSupplier(options.length) // length only available at parsing time
+  return str => keyArrayPair(storageKey, length(), parser, options)(str)
+}
+
+function keyArrayPair(key, length, parser, options) {
+  return object([key], array(length, parser, options))
 }
 
 function fromKeysOrParsers(keysOrParsers) {

@@ -89,7 +89,7 @@ expected to be an object, and all these objects are merged together (think
 A description for a parser in the array can be one of 3 things:
 - a string
 - a call `save`
-- a call to `n` or `n.usingName`
+- a call to `n`
 
 A string produces a parser that parses one integer, and returns an object that
 associates the string to that integer.
@@ -133,26 +133,24 @@ assert.deepEqual(parsedValue, {a: [1, 2, 3]})
 assert.equal(remaining, "4 5")
 ```
 
-`n.usingName` lets you use a named integer instead.
+The `length` option of `n` lets you use a named integer instead.
 
 ```js
 const parser = jolicitron((save, n) => [
   save("i"),
   save(),
-  n.usingName("i", "a")
+  n("a", {length: "i"})
 ])
 const {parsedValue, remaining} = parser("3 4 1 2 3 4 5")
 assert.deepEqual(parsedValue, {a: [1, 2, 3]})
 assert.equal(remaining, "4 5")
 ```
 
-`n` and `n.usingName` throw errors if the queue is empty or if the name is
-unknown, respectively.
+`n` throws errors if the queue is empty or if the name is unknown.
 
-`n` and `n.usingName` can take additional parameters. If those are present,
-they are used to describe how to parse each element of the resulting array,
-and the description of parsers seen before: strings, calls to `n` or calls to
-`save`.
+`n` can take additional parameters. If those are present, they are used to 
+describe how to parse each element of the resulting array, and the description 
+of parsers seen before: strings, calls to `n` or calls to `save`.
 
 ```js
 const parser = jolicitron((save, n) => [
@@ -199,12 +197,14 @@ assert.equal(remaining, "15 16")
 
 ### Options for `n`
 
-`n` can be given options object as a first parameter: `n("things", {...}, "a", "b", ...)`.
+`n` can be given options object as a second parameter: `n("things", {...}, "a", "b", ...)`.
 
 Possible options are:
-- `indices` (boolean, defaults to `false`): elements of the parsed array will
-have an `index` property denoting their order. This can be useful as indices
-are known to often play the role of IDs in Hash Code problems.
+- `length` (string, defaults to undefined): if present, should be the name of 
+an integer previously saved, which is used as the length of the array to parse. 
+- `indices` (boolean, defaults to `false`): if true, elements of the parsed 
+array will have an `index` property denoting their order. This can be useful 
+as indices are known to often play the role of IDs in Hash Code problems.
 
 ## Changelog
 
