@@ -208,6 +208,11 @@ as indices are known to often play the role of IDs in Hash Code problems.
 
 ## Changelog
 
+- 2.0.0
+  - *breaking* refactor: made builder parameters positional (see #11)
+  - *breaking* refactor: module exports the build function directly (see #10)
+  - *breaking* refactor: `save` and `save.usingName(name)` collapsed into a single `save([name])`
+  - *breaking* refactor: replaced `n.usingName` with `n`'s `length` option
 - 1.1.0
   - `indices` option for `n`
 - 1.0.2
