@@ -9,8 +9,8 @@
 
 const jolicitron = require("jolicitron")
 
-const parser = jolicitron.build(({push, n}) => [
-  "nrows", "nslots", push, "npools", push,
+const parser = jolicitron((save, n) => [
+  "nrows", "nslots", save(), "npools", save(),
   n("unavailables", "x", "y"),
   n("servers", "size", "capacity"),
 ])
