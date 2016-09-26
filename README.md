@@ -2,7 +2,6 @@
 
 A library to quickly build parsers for Google Hash Code problem inputs.
 
-![License](https://img.shields.io/npm/l/jolicitron.svg)
 ![Latest version on npm](https://img.shields.io/npm/v/jolicitron.svg)
 ![npm dependencies status](https://img.shields.io/david/hgwood/jolicitron.svg)
 ![Total number of downloads on npm](https://img.shields.io/npm/dt/jolicitron.svg)
