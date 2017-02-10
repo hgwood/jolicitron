@@ -1,6 +1,6 @@
 {
   "name": "jolicitron",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A parser builder for Google Hash Code problem inputs",
   "keywords": [
     "google",
