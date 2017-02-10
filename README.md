@@ -57,9 +57,8 @@ Jolicitron is written in ECMAScript 2015 so it requires Node 6+.
 
 ## API
 
-Jolicitron exports an object with a single method named `build`.
-
-`build` takes a function that returns a description of the parser you want to
+Jolicitron exports a single function. This function takes a function that
+returns a description of the parser you want to
 build, and returns the actual parser. A parser, in Jolicitron's context, is
 a function that takes a string and returns an object with two
 properties: `parsedValue` is the value that resulted from the parsing
@@ -78,7 +77,7 @@ assert.equal(remaining, "105")
 Hash Code problem inputs are usually made of a sequence of integers, separated
 by either spaces or new lines. Jolicitron does not care about spaces or new
 lines. It sees the input a sequence of integers, that can be parsed
-individually or grouped. Therefore, the function passed to `build` should
+individually or grouped. Therefore, the function passed to Jolicitron should
 return an array of description of parsers to use to parse the sequence. The
 first parser in the array will be used to parse the first integer, the
 second parser, the second integer, and so on. The result from each parser is
@@ -87,7 +86,7 @@ expected to be an object, and all these objects are merged together (think
 
 A description for a parser in the array can be one of 3 things:
 - a string
-- a call `save`
+- a call to `save`
 - a call to `n`
 
 A string produces a parser that parses one integer, and returns an object that
@@ -147,8 +146,8 @@ assert.equal(remaining, "4 5")
 
 `n` throws errors if the queue is empty or if the name is unknown.
 
-`n` can take additional parameters. If those are present, they are used to 
-describe how to parse each element of the resulting array, and the description 
+`n` can take additional parameters. If those are present, they are used to
+describe how to parse each element of the resulting array, and the description
 of parsers seen before: strings, calls to `n` or calls to `save`.
 
 ```js
@@ -199,14 +198,16 @@ assert.equal(remaining, "15 16")
 `n` can be given options object as a second parameter: `n("things", {...}, "a", "b", ...)`.
 
 Possible options are:
-- `length` (string, defaults to undefined): if present, should be the name of 
-an integer previously saved, which is used as the length of the array to parse. 
-- `indices` (boolean, defaults to `false`): if true, elements of the parsed 
-array will have an `index` property denoting their order. This can be useful 
+- `length` (string, defaults to undefined): if present, should be the name of
+an integer previously saved, which is used as the length of the array to parse.
+- `indices` (boolean, defaults to `false`): if true, elements of the parsed
+array will have an `index` property denoting their order. This can be useful
 as indices are known to often play the role of IDs in Hash Code problems.
 
 ## Changelog
 
+- 2.0.1
+  - documentation fixes
 - 2.0.0
   - *breaking* refactor: made builder parameters positional (see #11)
   - *breaking* refactor: module exports the build function directly (see #10)
