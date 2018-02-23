@@ -20,16 +20,16 @@
   "main": "jolicitron.js",
   "tonicExampleFilename": "examples/data-center/data-center.tonic.js",
   "scripts": {
-    "test": "tape test/*.test.js | faucet",
+    "test": "tape test/*.test.js | tap-spec",
     "cover": "istanbul cover node_modules/tape/bin/tape test/*.js",
     "lint": "eslint *.js test/*.js examples/*/*.js"
   },
   "dependencies": {
-    "lodash": "^4.5.0"
+    "lodash": "^4.5.0",
+    "tap-spec": "^4.1.1"
   },
   "devDependencies": {
     "eslint": "^2.5.2",
-    "faucet": "^0.0.1",
     "istanbul": "^0.4.3",
     "tape": "^4.4.0"
   },
