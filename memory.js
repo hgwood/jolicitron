@@ -1,25 +1,25 @@
-"use strict"
+"use strict";
 
-module.exports = {queue, hash}
+module.exports = { queue, hash };
 
 function queue() {
-  const queue = []
+  const queue = [];
   return {
     dequeue() {
-      if (0 in queue) return queue.shift()
-      else throw new Error("no more value to dequeue")
+      if (0 in queue) return queue.shift();
+      else throw new Error("no more value to dequeue");
     },
-    enqueue: value => queue.push(value),
-  }
+    enqueue: value => queue.push(value)
+  };
 }
 
 function hash() {
-  const hash = {}
+  const hash = {};
   return {
     get: key => () => {
-      if (key in hash) return hash[key]
-      else throw new Error(`unknown name "${key}"`)
+      if (key in hash) return hash[key];
+      else throw new Error(`unknown name "${key}"`);
     },
-    set: key => value => hash[key] = value,
-  }
+    set: key => value => (hash[key] = value)
+  };
 }
