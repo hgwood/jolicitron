@@ -41,10 +41,6 @@ function fromKey(key) {
   return object([key], int())
 }
 
-function feed(parserFactory, feeder) {
-    return (...args) => str => parserFactory(feeder(), ...args)(str)
-}
-
 function extract(parser, ...extractors) {
   return str => _.tap(parser(str), ({parsedValue}) => _.each(extractors, extractor => extractor(parsedValue)))
 }

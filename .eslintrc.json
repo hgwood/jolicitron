@@ -1,20 +1,10 @@
 {
   "extends": "eslint:recommended",
-  "ecmaVersion": 6,
+  "parserOptions": {
+    "ecmaVersion": 2015
+  },
   "env": {
     "node": true,
     "es6": true
-  },
-  "rules": {
-    // Possible Errors http://eslint.org/docs/rules/#possible-errors
-    "comma-dangle": ["warn", "always-multiline"],
-    
-    // Variables http://eslint.org/docs/rules/#variables
-    "no-unused-vars": "warn",
-
-    // Stylistic Issues http://eslint.org/docs/rules/#stylistic-issues
-    "eol-last": "warn",
-    "quotes": ["warn", "double", "avoid-escape"],
-    "semi": ["warn", "never"]
   }
 }
