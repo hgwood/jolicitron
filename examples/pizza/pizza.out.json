@@ -1,0 +1,10 @@
+{
+  "ncolumns": 5,
+  "minIngredients": 1,
+  "maxCells": 6,
+  "rows": [
+    {"row": "TTTTT"},
+    {"row": "TMMMT"},
+    {"row": "TTTTT"}
+  ]
+}

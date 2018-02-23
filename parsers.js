@@ -3,7 +3,13 @@
 const _ = require("lodash");
 const assert = require("assert");
 
-module.exports = parserify({ int, array, object, merged, tuple });
+module.exports = parserify({
+  intOrString,
+  array,
+  object,
+  merged,
+  tuple
+});
 
 function parserify(parsers) {
   return _.mapValues(parsers, parser => (...args) => str =>
@@ -11,13 +17,19 @@ function parserify(parsers) {
   );
 }
 
-function int(str) {
+function intOrString(str) {
   const parsedValue = parseInt(str);
-  assert(_.isInteger(parsedValue), `expected int but found '${str}'`);
-  const remaining = str.substring(
-    str.indexOf(parsedValue.toString()) + parsedValue.toString().length
-  );
-  return { parsedValue, remaining };
+  if (_.isInteger(parsedValue)) {
+    const remaining = str.substring(
+      str.indexOf(parsedValue.toString()) + parsedValue.toString().length
+    );
+    return { parsedValue, remaining };
+  }
+  const indexOfNextSpace = str.search(/ |\r?\n/);
+  return {
+    parsedValue: str.substring(0, indexOfNextSpace),
+    remaining: str.substring(indexOfNextSpace + 1)
+  };
 }
 
 function array(str, length, itemParser, { indices } = { indices: false }) {

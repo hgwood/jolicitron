@@ -1,7 +1,7 @@
 "use strict";
 
 const _ = require("lodash");
-const { int, array, object, merged } = require("./parsers");
+const { intOrString, array, object, merged } = require("./parsers");
 const { hash, queue } = require("./memory");
 
 module.exports = build;
@@ -13,7 +13,8 @@ function build(builder) {
     deferredKeyArrayPair,
     name => (name ? get(name)() : dequeue())
   );
-  const save = name => extract(int(), name ? set(name) : _.noop, enqueue);
+  const save = name =>
+    extract(intOrString(), name ? set(name) : _.noop, enqueue);
   return fromKeysOrParsers(builder(save, n));
 }
 
@@ -38,7 +39,7 @@ function keyArrayPair(key, length, parser, options) {
 }
 
 function fromKeysOrParsers(keysOrParsers) {
-  if (keysOrParsers.length === 0) return int();
+  if (keysOrParsers.length === 0) return intOrString();
   else return merged(_.map(keysOrParsers, fromKeyOrParser));
 }
 
@@ -47,7 +48,7 @@ function fromKeyOrParser(keyOrParser) {
 }
 
 function fromKey(key) {
-  return object([key], int());
+  return object([key], intOrString());
 }
 
 function extract(parser, ...extractors) {
