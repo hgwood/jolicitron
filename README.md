@@ -206,6 +206,8 @@ as indices are known to often play the role of IDs in Hash Code problems.
 
 ## Changelog
 
+- 2.1.0
+  - support for string tokens
 - 2.0.1
   - documentation fixes
 - 2.0.0
