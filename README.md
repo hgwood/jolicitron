@@ -46,6 +46,9 @@ const {parsedValue, remaining} = parser(input)
 }
 ```
 
+ℹ Since 2.1, jolicitron also supports strings in addition to integer in problem
+inputs.
+
 ## Real-world Hash Code examples
 
 Check out the [examples](https://github.com/hgwood/hash-code-parser/tree/master/examples)
@@ -208,6 +211,7 @@ as indices are known to often play the role of IDs in Hash Code problems.
 
 - 2.1.0
   - support for string tokens
+    - ⚠ if your program relies on the fact that string tokens raise errors, then this is actually a breaking change
 - 2.0.1
   - documentation fixes
 - 2.0.0
