@@ -1,5 +1,5 @@
 import { parseAsObject, parseAsArray, parseAsNumber } from "./parser";
-import * as test from "tape";
+import test from "tape";
 
 const parse = parseAsObject([
   { name: "nrows", parser: parseAsNumber },

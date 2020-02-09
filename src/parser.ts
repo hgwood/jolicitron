@@ -40,7 +40,7 @@ export const parseAsArray = <T>({
         value: [],
         remaining: input,
         context
-      }
+      } as ParserResult<Array<T>>
     );
   };
 };
@@ -60,10 +60,9 @@ export const parseAsNumber: Parser<number> = (input, context) => {
 
 type Context = { [key: string]: unknown };
 
-type Parser<T> = (
-  input: string,
-  context?: Context
-) => { value: T; remaining: string; context?: Context };
+type Parser<T> = (input: string, context?: Context) => ParserResult<T>;
+
+type ParserResult<T> = { value: T; remaining: string; context?: Context };
 
 type PropertyParserOptions<T> = {
   name: string;
