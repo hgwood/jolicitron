@@ -1,49 +1,64 @@
-import { parseAsObject, parseAsArray, parseAsNumber } from "./parser";
+import jolicitron, { ParserDefinition } from "./parser";
 import test from "tape";
 
-const parse = parseAsObject([
-  { name: "nrows", parser: parseAsNumber },
-  { name: "ncols", parser: parseAsNumber },
-  { name: "ndrones", parser: parseAsNumber },
-  { name: "nturns", parser: parseAsNumber },
-  { name: "maxLoad", parser: parseAsNumber },
-  { name: "nitemTypes", parser: parseAsNumber },
-  {
-    name: "weights",
-    parser: parseAsArray({ length: "nitemTypes", parser: parseAsNumber })
-  },
-  { name: "nwarehouses", parser: parseAsNumber },
-  {
-    name: "warehouses",
-    parser: parseAsArray({
+const parserDefinition: ParserDefinition = {
+  type: "object",
+  properties: [
+    { name: "nrows", type: "number" },
+    { name: "ncols", type: "number" },
+    { name: "ndrones", type: "number" },
+    { name: "nturns", type: "number" },
+    { name: "maxLoad", type: "number" },
+    { name: "nitemTypes", type: "number" },
+    {
+      name: "weights",
+      type: "array",
+      length: "nitemTypes",
+      items: { type: "number" }
+    },
+    { name: "nwarehouses", type: "number" },
+    {
+      name: "warehouses",
+      type: "array",
       length: "nwarehouses",
-      parser: parseAsObject([
-        { name: "x", parser: parseAsNumber },
-        { name: "y", parser: parseAsNumber },
-        {
-          name: "items",
-          parser: parseAsArray({ length: "nitemTypes", parser: parseAsNumber })
-        }
-      ])
-    })
-  },
-  { name: "norders", parser: parseAsNumber },
-  {
-    name: "orders",
-    parser: parseAsArray({
+      items: {
+        type: "object",
+        properties: [
+          { name: "x", type: "number" },
+          { name: "y", type: "number" },
+          {
+            name: "items",
+            type: "array",
+            length: "nitemTypes",
+            items: { type: "number" }
+          }
+        ]
+      }
+    },
+    { name: "norders", type: "number" },
+    {
+      name: "orders",
+      type: "array",
       length: "norders",
-      parser: parseAsObject([
-        { name: "x", parser: parseAsNumber },
-        { name: "y", parser: parseAsNumber },
-        { name: "nitems", parser: parseAsNumber },
-        {
-          name: "items",
-          parser: parseAsArray({ length: "nitems", parser: parseAsNumber })
-        }
-      ])
-    })
-  }
-]);
+      items: {
+        type: "object",
+        properties: [
+          { name: "x", type: "number" },
+          { name: "y", type: "number" },
+          { name: "nitems", type: "number" },
+          {
+            name: "items",
+            type: "array",
+            length: "nitems",
+            items: {
+              type: "number"
+            }
+          }
+        ]
+      }
+    }
+  ]
+};
 
 const input = `
   100 100 3 50 500
@@ -88,7 +103,7 @@ const expected = {
 };
 
 test("parses the drone example correctly", t => {
-  const { value: actual } = parse(input);
+  const actual = jolicitron(parserDefinition, input);
   t.deepEqual(actual, expected);
   t.end();
 });

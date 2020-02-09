@@ -1,21 +1,23 @@
-import {
-  parseAsObject,
-  parseAsArray,
-  parseAsNumber,
-  parseAsString
-} from "./parser";
+import jolicitron, { ParserDefinition } from "./parser";
 import test from "tape";
 
-const parse = parseAsObject([
-  { name: "nrows", parser: parseAsNumber },
-  { name: "ncolumns", parser: parseAsNumber },
-  { name: "minIngredients", parser: parseAsNumber },
-  { name: "maxCells", parser: parseAsNumber },
-  {
-    name: "rows",
-    parser: parseAsArray({ length: "nrows", parser: parseAsString })
-  }
-]);
+const parserDefinition: ParserDefinition = {
+  type: "object",
+  properties: [
+    { name: "nrows", type: "number" },
+    { name: "ncolumns", type: "number" },
+    { name: "minIngredients", type: "number" },
+    { name: "maxCells", type: "number" },
+    {
+      name: "rows",
+      type: "array",
+      length: "nrows",
+      items: {
+        type: "string"
+      }
+    }
+  ]
+};
 
 const input = `
   3 5 1 6
@@ -33,7 +35,7 @@ const expected = {
 };
 
 test("parses the pizza example correctly", t => {
-  const { value: actual } = parse(input);
+  const actual = jolicitron(parserDefinition, input);
   t.deepEqual(actual, expected);
   t.end();
 });

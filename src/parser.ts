@@ -1,14 +1,50 @@
-export const parseAsObject = (
-  parsers: ReadonlyArray<PropertyParserOptions<unknown>>
-): Parser<{ [key: string]: unknown }> => {
+export const jolicitron = (
+  parserDefinition: ParserDefinition,
+  input: string
+) => {
+  const parser = compile(parserDefinition);
+  const { value } = parser(input);
+  return value;
+};
+
+export default jolicitron;
+
+export const compile = (
+  parserDefinition: ParserDefinition
+): Parser<unknown> => {
+  switch (parserDefinition.type) {
+    case "object":
+      return compileObject(parserDefinition);
+    case "array":
+      return compileArray(parserDefinition);
+    case "number":
+      return compileNumber(parserDefinition);
+    case "string":
+      return compileString(parserDefinition);
+  }
+};
+
+export const compileObject = ({
+  properties
+}: ObjectParserDefinition): Parser<unknown> => {
   return (input, context = {}) => {
-    return parsers.reduce(
-      (output, { name, parser }) => {
-        const property = parser(output.remaining, output.context);
+    return properties.reduce(
+      (objectParserResult, { name, ...propertyParserDefinition }) => {
+        const propertyParser = compile(propertyParserDefinition);
+        const propertyParserResult = propertyParser(
+          objectParserResult.remaining,
+          objectParserResult.context
+        );
         return {
-          value: { ...output.value, [name]: property.value },
-          remaining: property.remaining,
-          context: { ...output.context, [name]: property.value }
+          value: {
+            ...objectParserResult.value,
+            [name]: propertyParserResult.value
+          },
+          remaining: propertyParserResult.remaining,
+          context: {
+            ...objectParserResult.context,
+            [name]: propertyParserResult.value
+          }
         };
       },
       { value: {}, remaining: input, context }
@@ -16,92 +52,97 @@ export const parseAsObject = (
   };
 };
 
-export const parseAsArray = <T>({
+export const compileArray = ({
   length,
-  parser
-}: ArrayParserOptions<T>): Parser<Array<T>> => {
+  items
+}: ArrayParserDefinition): Parser<unknown[]> => {
   return (input, context = {}) => {
-    if (!context || !context[length]) {
-      throw new RangeError(`'${length}' not found in context`);
+    const lengthValue = Number(context?.[length]);
+    if (!Number.isSafeInteger(lengthValue) || lengthValue < 0) {
+      throw new RangeError(
+        `expected '${length}' to be a safe positive integer but found '${context?.[length]}'`
+      );
     }
-    return Array.from({ length: context[length] as number } as ArrayLike<
-      number
-    >).reduce(
-      output => {
-        const item = parser(output.remaining, context);
+    return Array.from({ length: lengthValue } as ArrayLike<number>).reduce(
+      arrayParserResult => {
+        const itemParser = compile(items);
+        const itemParserResult = itemParser(
+          arrayParserResult.remaining,
+          context
+        );
         return {
-          ...item,
-          value: [...output.value, item.value]
+          ...itemParserResult,
+          value: [...arrayParserResult.value, itemParserResult.value]
         };
       },
       {
         value: [],
         remaining: input,
         context
-      } as ParserResult<Array<T>>
+      } as ParserResult<unknown[]>
     );
   };
 };
 
-export const parseAsNumber: Parser<number> = (input, context = {}) => {
-  const [nextToken, ...remainingTokens] = input.split(/\s+/).filter(Boolean);
-  const value = Number(nextToken);
-  if (Number.isNaN(value)) {
-    throw new RangeError(`expected number but found '${value}'`);
-  }
-  return {
-    value,
-    remaining: remainingTokens.join(" "),
-    context
-  };
-};
-
-export const parseAsString: Parser<string> = (input, context = {}) => {
-  const [nextToken, ...remainingTokens] = input.split(/\s+/).filter(Boolean);
-  return {
-    value: nextToken,
-    remaining: remainingTokens.join(" "),
-    context
-  };
-};
-
-export const normalizeParser = (
-  parserInput: PropertyParserInput<unknown>
-): PropertyParserOptions<unknown> => {
-  const parserOptions =
-    typeof parserInput === "string" ? { name: parserInput } : parserInput;
-  const parser = parserOptions.parser || parseAsNumber;
-  return parserOptions.length
-    ? {
-        name: parserOptions.name,
-        parser: parseAsArray({ length: parserOptions.length, parser })
-      }
-    : {
-        name: parserOptions.name,
-        parser
-      };
-};
-
-type PropertyParserInput<T> =
-  | string
-  | {
-      name: string;
-      parser?: Parser<T>;
-      length?: string;
+export const compileNumber = (
+  parserDefinition: NumberParserDefinition
+): Parser<number> => {
+  return (input, context = {}) => {
+    const [nextToken, ...remainingTokens] = input.split(/\s+/).filter(Boolean);
+    const value = Number(nextToken);
+    if (Number.isNaN(value)) {
+      throw new RangeError(`expected number but found '${value}'`);
+    }
+    return {
+      value,
+      remaining: remainingTokens.join(" "),
+      context
     };
+  };
+};
 
-type Context = { [key: string]: unknown };
+export const compileString = (
+  parserDefinition: StringParserDefinition
+): Parser<string> => {
+  return (input, context = {}) => {
+    const [nextToken, ...remainingTokens] = input.split(/\s+/).filter(Boolean);
+    return {
+      value: nextToken,
+      remaining: remainingTokens.join(" "),
+      context
+    };
+  };
+};
+
+export type ParserDefinition =
+  | ObjectParserDefinition
+  | ArrayParserDefinition
+  | NumberParserDefinition
+  | StringParserDefinition;
+
+export type ObjectParserDefinition = {
+  type: "object";
+  properties: PropertyParser[];
+};
+
+export type PropertyParser = { name: string } & ParserDefinition;
+
+export type ArrayParserDefinition = {
+  type: "array";
+  length: string;
+  items: ParserDefinition;
+};
+
+export type NumberParserDefinition = {
+  type: "number";
+};
+
+export type StringParserDefinition = {
+  type: "string";
+};
 
 type Parser<T> = (input: string, context?: Context) => ParserResult<T>;
 
+type Context = { [key: string]: unknown };
+
 type ParserResult<T> = { value: T; remaining: string; context?: Context };
-
-type PropertyParserOptions<T> = {
-  name: string;
-  parser: Parser<T>;
-};
-
-type ArrayParserOptions<T> = {
-  length: string;
-  parser: Parser<T>;
-};
