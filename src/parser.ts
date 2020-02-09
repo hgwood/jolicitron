@@ -1,6 +1,6 @@
 export const parseAsObject = (
-  parsers: ReadonlyArray<PropertyParserOptions<any>>
-): Parser<{ [key: string]: any }> => {
+  parsers: ReadonlyArray<PropertyParserOptions<unknown>>
+): Parser<{ [key: string]: unknown }> => {
   return (input, context = {}) => {
     return parsers.reduce(
       (output, { name, parser, erase = false }) => {
@@ -67,7 +67,7 @@ type Parser<T> = (
 
 type PropertyParserOptions<T> = {
   name: string;
-  parser: Parser<unknown>;
+  parser: Parser<T>;
   erase?: boolean;
 };
 
