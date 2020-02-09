@@ -146,3 +146,30 @@ type Parser<T> = (input: string, context?: Context) => ParserResult<T>;
 type Context = { [key: string]: unknown };
 
 type ParserResult<T> = { value: T; remaining: string; context?: Context };
+
+export const normalize = (
+  shortParserDefinition: ShortParserDefinition
+): ParserDefinition => {
+  if (Array.isArray(shortParserDefinition)) {
+    return {
+      type: "object",
+      properties: shortParserDefinition
+    };
+  } else {
+    return {
+      type: "number",
+      ...shortParserDefinition
+    };
+  }
+};
+
+export type ShortParserDefinition =
+  | ParserDefinition
+  | ImpliedObjectParserDefinition
+  | ImpliedNumberPropertyParserDefinition;
+
+type ImpliedObjectParserDefinition = ObjectParserDefinition["properties"];
+
+type ImpliedNumberPropertyParserDefinition = {
+  name: string;
+};
