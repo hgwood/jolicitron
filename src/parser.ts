@@ -43,7 +43,7 @@ export const parseAsArray = <T>({
   };
 };
 
-export const parseAsNumber: Parser<number> = (input, context) => {
+export const parseAsNumber: Parser<number> = (input, context = {}) => {
   const [nextToken, ...remainingTokens] = input.split(/\s+/).filter(Boolean);
   const value = Number(nextToken);
   if (Number.isNaN(value)) {
@@ -55,6 +55,15 @@ export const parseAsNumber: Parser<number> = (input, context) => {
     context
   };
 };
+
+export const parseAsString: Parser<string> = (input, context = {}) => {
+  const [nextToken, ...remainingTokens] = input.split(/\s+/).filter(Boolean);
+  return {
+    value: nextToken,
+    remaining: remainingTokens.join(" "),
+    context
+  };
+}
 
 type Context = { [key: string]: unknown };
 
