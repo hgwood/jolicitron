@@ -63,7 +63,24 @@ export const parseAsString: Parser<string> = (input, context = {}) => {
     remaining: remainingTokens.join(" "),
     context
   };
-}
+};
+
+export const normalizeParser = (
+  parserInput: PropertyParserInput<unknown>
+): PropertyParserOptions<unknown> => {
+  const parserOptions = typeof parserInput === "string" ? { name: parserInput } : parserInput;
+  return {
+    name: parserOptions.name,
+    parser: parserOptions.parser || parseAsNumber
+  };
+};
+
+type PropertyParserInput<T> =
+  | string
+  | {
+      name: string;
+      parser?: Parser<T>;
+    };
 
 type Context = { [key: string]: unknown };
 
