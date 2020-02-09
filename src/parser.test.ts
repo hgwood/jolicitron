@@ -87,7 +87,7 @@ const expected = {
   ]
 };
 
-test("coucou", t => {
+test("parses the drone example correctly", t => {
   const { value: actual } = parse(input);
   t.deepEqual(actual, expected);
   t.end();
