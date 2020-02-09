@@ -68,11 +68,18 @@ export const parseAsString: Parser<string> = (input, context = {}) => {
 export const normalizeParser = (
   parserInput: PropertyParserInput<unknown>
 ): PropertyParserOptions<unknown> => {
-  const parserOptions = typeof parserInput === "string" ? { name: parserInput } : parserInput;
-  return {
-    name: parserOptions.name,
-    parser: parserOptions.parser || parseAsNumber
-  };
+  const parserOptions =
+    typeof parserInput === "string" ? { name: parserInput } : parserInput;
+  const parser = parserOptions.parser || parseAsNumber;
+  return parserOptions.length
+    ? {
+        name: parserOptions.name,
+        parser: parseAsArray({ length: parserOptions.length, parser })
+      }
+    : {
+        name: parserOptions.name,
+        parser
+      };
 };
 
 type PropertyParserInput<T> =
@@ -80,6 +87,7 @@ type PropertyParserInput<T> =
   | {
       name: string;
       parser?: Parser<T>;
+      length?: string;
     };
 
 type Context = { [key: string]: unknown };

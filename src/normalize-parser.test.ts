@@ -1,5 +1,5 @@
 import test from "tape";
-import { parseAsNumber, normalizeParser } from "./parser";
+import { parseAsNumber, normalizeParser, parseAsArray } from "./parser";
 
 test("explicit parser get through", t => {
   const expected = { name: "name", parser: parseAsNumber };
@@ -22,3 +22,16 @@ test("string input means parse as number with given name", t => {
   t.end();
 });
 
+test("length property means parse as array", t => {
+  const expected = {
+    name: "array",
+    parser: parseAsArray({ length: "length", parser: parseAsNumber })
+  };
+  const actual = normalizeParser({
+    name: "array",
+    length: "length",
+    parser: parseAsNumber
+  });
+  t.deepEqual(actual, expected);
+  t.end();
+});
