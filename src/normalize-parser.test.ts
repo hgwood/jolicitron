@@ -1,6 +1,13 @@
 import test from "tape";
 import { parseAsNumber, normalizeParser } from "./parser";
 
+test("explicit parser get through", t => {
+  const expected = { name: "name", parser: parseAsNumber };
+  const actual = normalizeParser(expected);
+  t.deepEqual(actual, expected);
+  t.end();
+});
+
 test("parse as number by default", t => {
   const expected = { name: "name", parser: parseAsNumber };
   const actual = normalizeParser({ name: "name" });
