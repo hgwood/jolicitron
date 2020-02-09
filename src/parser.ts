@@ -161,6 +161,12 @@ export const normalize = (
       name: shortParserDefinition
     };
     return propertyParser;
+  } else if ("length" in shortParserDefinition) {
+    return {
+      type: "array",
+      items: { type: "number" },
+      ...shortParserDefinition
+    };
   } else {
     return {
       type: "number",
@@ -173,7 +179,9 @@ export type ShortParserDefinition =
   | ParserDefinition
   | ImpliedObjectParserDefinition
   | ImpliedNumberPropertyParserDefinition
-  | ShortImpliedNumberPropertyParserDefinition;
+  | ShortImpliedNumberPropertyParserDefinition
+  | ImpliedNumberArrayParserDefinition
+  | ImpliedNumberArrayPropertyParserDefinition;
 
 type ImpliedObjectParserDefinition = ObjectParserDefinition["properties"];
 
@@ -182,3 +190,11 @@ type ImpliedNumberPropertyParserDefinition = {
 };
 
 type ShortImpliedNumberPropertyParserDefinition = string;
+
+type ImpliedNumberArrayParserDefinition = {
+  length: ArrayParserDefinition["length"];
+};
+
+type ImpliedNumberArrayPropertyParserDefinition = ImpliedNumberArrayParserDefinition & {
+  name: string;
+};
