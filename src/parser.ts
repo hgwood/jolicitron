@@ -155,6 +155,12 @@ export const normalize = (
       type: "object",
       properties: shortParserDefinition
     };
+  } else if (typeof shortParserDefinition === "string") {
+    const propertyParser: PropertyParser = {
+      type: "number",
+      name: shortParserDefinition
+    };
+    return propertyParser;
   } else {
     return {
       type: "number",
@@ -166,10 +172,13 @@ export const normalize = (
 export type ShortParserDefinition =
   | ParserDefinition
   | ImpliedObjectParserDefinition
-  | ImpliedNumberPropertyParserDefinition;
+  | ImpliedNumberPropertyParserDefinition
+  | ShortImpliedNumberPropertyParserDefinition;
 
 type ImpliedObjectParserDefinition = ObjectParserDefinition["properties"];
 
 type ImpliedNumberPropertyParserDefinition = {
   name: string;
 };
+
+type ShortImpliedNumberPropertyParserDefinition = string;
