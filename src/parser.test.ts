@@ -7,12 +7,12 @@ const parse = parseAsObject([
   { name: "ndrones", parser: parseAsNumber },
   { name: "nturns", parser: parseAsNumber },
   { name: "maxLoad", parser: parseAsNumber },
-  { name: "nitemTypes", parser: parseAsNumber, erase: true },
+  { name: "nitemTypes", parser: parseAsNumber },
   {
     name: "weights",
     parser: parseAsArray({ length: "nitemTypes", parser: parseAsNumber })
   },
-  { name: "nwarehouses", parser: parseAsNumber, erase: true },
+  { name: "nwarehouses", parser: parseAsNumber },
   {
     name: "warehouses",
     parser: parseAsArray({
@@ -27,7 +27,7 @@ const parse = parseAsObject([
       ])
     })
   },
-  { name: "norders", parser: parseAsNumber, erase: true },
+  { name: "norders", parser: parseAsNumber },
   {
     name: "orders",
     parser: parseAsArray({
@@ -35,7 +35,7 @@ const parse = parseAsObject([
       parser: parseAsObject([
         { name: "x", parser: parseAsNumber },
         { name: "y", parser: parseAsNumber },
-        { name: "nitems", parser: parseAsNumber, erase: true },
+        { name: "nitems", parser: parseAsNumber },
         {
           name: "items",
           parser: parseAsArray({ length: "nitems", parser: parseAsNumber })
@@ -72,15 +72,18 @@ const expected = {
   ndrones: 3,
   nturns: 50,
   maxLoad: 500,
+  nitemTypes: 3,
   weights: [100, 5, 450],
+  nwarehouses: 2,
   warehouses: [
     { x: 0, y: 0, items: [5, 1, 0] },
     { x: 5, y: 5, items: [0, 10, 2] }
   ],
+  norders: 3,
   orders: [
-    { x: 1, y: 1, items: [2, 0] },
-    { x: 3, y: 3, items: [0, 0, 0] },
-    { x: 5, y: 6, items: [2] }
+    { x: 1, y: 1, nitems: 2, items: [2, 0] },
+    { x: 3, y: 3, nitems: 3, items: [0, 0, 0] },
+    { x: 5, y: 6, nitems: 1, items: [2] }
   ]
 };
 

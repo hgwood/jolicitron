@@ -3,12 +3,10 @@ export const parseAsObject = (
 ): Parser<{ [key: string]: unknown }> => {
   return (input, context = {}) => {
     return parsers.reduce(
-      (output, { name, parser, erase = false }) => {
+      (output, { name, parser }) => {
         const property = parser(output.remaining, output.context);
         return {
-          value: erase
-            ? output.value
-            : { ...output.value, [name]: property.value },
+          value: { ...output.value, [name]: property.value },
           remaining: property.remaining,
           context: { ...output.context, [name]: property.value }
         };
@@ -67,7 +65,6 @@ type ParserResult<T> = { value: T; remaining: string; context?: Context };
 type PropertyParserOptions<T> = {
   name: string;
   parser: Parser<T>;
-  erase?: boolean;
 };
 
 type ArrayParserOptions<T> = {
