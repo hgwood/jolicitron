@@ -1,69 +1,5 @@
-import jolicitron, { ParserDefinition } from "./parser";
+import jolicitron, { ParserDefinition, ShortParserDefinition } from "./parser";
 import test from "tape";
-
-const parserDefinition: ParserDefinition = {
-  type: "object",
-  properties: [
-    { nrows: { type: "number" } },
-    { ncols: { type: "number" } },
-    { ndrones: { type: "number" } },
-    { nturns: { type: "number" } },
-    { maxLoad: { type: "number" } },
-    { nitemTypes: { type: "number" } },
-    {
-      weights: {
-        type: "array",
-        length: "nitemTypes",
-        items: { type: "number" }
-      }
-    },
-    { nwarehouses: { type: "number" } },
-    {
-      warehouses: {
-        type: "array",
-        length: "nwarehouses",
-        items: {
-          type: "object",
-          properties: [
-            { x: { type: "number" } },
-            { y: { type: "number" } },
-            {
-              items: {
-                type: "array",
-                length: "nitemTypes",
-                items: { type: "number" }
-              }
-            }
-          ]
-        }
-      }
-    },
-    { norders: { type: "number" } },
-    {
-      orders: {
-        type: "array",
-        length: "norders",
-        items: {
-          type: "object",
-          properties: [
-            { x: { type: "number" } },
-            { y: { type: "number" } },
-            { nitems: { type: "number" } },
-            {
-              items: {
-                type: "array",
-                length: "nitems",
-                items: {
-                  type: "number"
-                }
-              }
-            }
-          ]
-        }
-      }
-    }
-  ]
-};
 
 const input = `
   100 100 3 50 500
@@ -107,7 +43,89 @@ const expected = {
   ]
 };
 
-test("parses the drone example correctly", t => {
+test("parses the drone example correctly using fully explicit definition", t => {
+  const parserDefinition: ParserDefinition = {
+    type: "object",
+    properties: [
+      { nrows: { type: "number" } },
+      { ncols: { type: "number" } },
+      { ndrones: { type: "number" } },
+      { nturns: { type: "number" } },
+      { maxLoad: { type: "number" } },
+      { nitemTypes: { type: "number" } },
+      {
+        weights: {
+          type: "array",
+          length: "nitemTypes",
+          items: { type: "number" }
+        }
+      },
+      { nwarehouses: { type: "number" } },
+      {
+        warehouses: {
+          type: "array",
+          length: "nwarehouses",
+          items: {
+            type: "object",
+            properties: [
+              { x: { type: "number" } },
+              { y: { type: "number" } },
+              {
+                items: {
+                  type: "array",
+                  length: "nitemTypes",
+                  items: { type: "number" }
+                }
+              }
+            ]
+          }
+        }
+      },
+      { norders: { type: "number" } },
+      {
+        orders: {
+          type: "array",
+          length: "norders",
+          items: {
+            type: "object",
+            properties: [
+              { x: { type: "number" } },
+              { y: { type: "number" } },
+              { nitems: { type: "number" } },
+              {
+                items: {
+                  type: "array",
+                  length: "nitems",
+                  items: {
+                    type: "number"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    ]
+  };
+  const actual = jolicitron(parserDefinition, input);
+  t.deepEqual(actual, expected);
+  t.end();
+});
+
+test("parses the drone example correctly using shortest definition possible", t => {
+  const parserDefinition: ShortParserDefinition = [
+    "nrows",
+    "ncols",
+    "ndrones",
+    "nturns",
+    "maxLoad",
+    "nitemTypes",
+    ["weights", "nitemTypes"],
+    "nwarehouses",
+    ["warehouses", "nwarehouses", ["x", "y", ["items", "nitemTypes"]]],
+    "norders",
+    ["orders", "norders", ["x", "y", "nitems", ["items", "nitems"]]]
+  ];
   const actual = jolicitron(parserDefinition, input);
   t.deepEqual(actual, expected);
   t.end();

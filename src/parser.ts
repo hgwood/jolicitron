@@ -1,8 +1,9 @@
 export const jolicitron = (
-  parserDefinition: ParserDefinition,
+  parserDefinition: ShortParserDefinition,
   input: string
 ) => {
-  const parser = compile(parserDefinition);
+  const normalized = normalize(parserDefinition);
+  const parser = compile(normalized);
   const tokens = tokenize(input);
   const { value } = parser(tokens);
   return value;
