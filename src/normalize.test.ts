@@ -28,6 +28,48 @@ test("string for a property implies number property", t => {
   t.end();
 });
 
+test("3-tuple for a property implies array property", t => {
+  const actual = normalize({
+    type: "object",
+    properties: [["myProperty", "myLength", { type: "string" }]]
+  });
+  const expected = {
+    type: "object",
+    properties: [
+      {
+        myProperty: {
+          type: "array",
+          length: "myLength",
+          items: { type: "string" }
+        }
+      }
+    ]
+  };
+  t.deepEqual(actual, expected);
+  t.end();
+});
+
+test("2-tuple for a property implies number array property", t => {
+  const actual = normalize({
+    type: "object",
+    properties: [["myProperty", "myLength"]]
+  });
+  const expected = {
+    type: "object",
+    properties: [
+      {
+        myProperty: {
+          type: "array",
+          length: "myLength",
+          items: { type: "number" }
+        }
+      }
+    ]
+  };
+  t.deepEqual(actual, expected);
+  t.end();
+});
+
 test("length implies array", t => {
   const actual = normalize({ length: "length" }).type;
   const expected = "array";
