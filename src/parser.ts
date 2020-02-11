@@ -3,7 +3,8 @@ export const jolicitron = (
   input: string
 ) => {
   const parser = compile(parserDefinition);
-  const { value } = parser(input);
+  const tokens = tokenize(input);
+  const { value } = parser(tokens);
   return value;
 };
 
@@ -27,7 +28,7 @@ export const compile = (
 export const compileObject = ({
   properties
 }: ObjectParserDefinition): Parser<unknown> => {
-  return (input, context = {}) => {
+  return (tokens, context = {}) => {
     return properties.reduce(
       (objectParserResult, propertyParserDefinition) => {
         const [[propertyName, parserDefinition]] = Object.entries(
@@ -50,7 +51,7 @@ export const compileObject = ({
           }
         };
       },
-      { value: {}, remaining: input, context }
+      { value: {}, remaining: tokens, context }
     );
   };
 };
@@ -59,7 +60,7 @@ export const compileArray = ({
   length,
   items
 }: ArrayParserDefinition): Parser<unknown[]> => {
-  return (input, context = {}) => {
+  return (tokens, context = {}) => {
     const lengthValue = Number(context?.[length]);
     if (!Number.isSafeInteger(lengthValue) || lengthValue < 0) {
       throw new RangeError(
@@ -80,7 +81,7 @@ export const compileArray = ({
       },
       {
         value: [],
-        remaining: input,
+        remaining: tokens,
         context
       } as ParserResult<unknown[]>
     );
@@ -90,15 +91,15 @@ export const compileArray = ({
 export const compileNumber = (
   parserDefinition: NumberParserDefinition
 ): Parser<number> => {
-  return (input, context = {}) => {
-    const [nextToken, ...remainingTokens] = input.split(/\s+/).filter(Boolean);
+  return (tokens, context = {}) => {
+    const [nextToken, ...remaining] = tokens;
     const value = Number(nextToken);
     if (Number.isNaN(value)) {
       throw new RangeError(`expected number but found '${value}'`);
     }
     return {
       value,
-      remaining: remainingTokens.join(" "),
+      remaining,
       context
     };
   };
@@ -107,14 +108,18 @@ export const compileNumber = (
 export const compileString = (
   parserDefinition: StringParserDefinition
 ): Parser<string> => {
-  return (input, context = {}) => {
-    const [nextToken, ...remainingTokens] = input.split(/\s+/).filter(Boolean);
+  return (tokens, context = {}) => {
+    const [nextToken, ...remaining] = tokens;
     return {
       value: nextToken,
-      remaining: remainingTokens.join(" "),
+      remaining,
       context
     };
   };
+};
+
+export const tokenize = (input: string) => {
+  return input.split(/\s+/).filter(Boolean);
 };
 
 export type ParserDefinition =
@@ -144,11 +149,11 @@ export type StringParserDefinition = {
   type: "string";
 };
 
-type Parser<T> = (input: string, context?: Context) => ParserResult<T>;
+type Parser<T> = (tokens: string[], context?: Context) => ParserResult<T>;
 
 type Context = { [key: string]: unknown };
 
-type ParserResult<T> = { value: T; remaining: string; context?: Context };
+type ParserResult<T> = { value: T; remaining: string[]; context?: Context };
 
 export const normalize = (
   shortParserDefinition: ShortParserDefinition
