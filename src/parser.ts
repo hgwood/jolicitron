@@ -30,7 +30,7 @@ export const compileObject = ({
   return (input, context = {}) => {
     return properties.reduce(
       (objectParserResult, propertyParserDefinition) => {
-        const [[name, parserDefinition]] = Object.entries(
+        const [[propertyName, parserDefinition]] = Object.entries(
           propertyParserDefinition
         );
         const propertyParser = compile(parserDefinition);
@@ -41,12 +41,12 @@ export const compileObject = ({
         return {
           value: {
             ...objectParserResult.value,
-            [name]: propertyParserResult.value
+            [propertyName]: propertyParserResult.value
           },
           remaining: propertyParserResult.remaining,
           context: {
             ...objectParserResult.context,
-            [name]: propertyParserResult.value
+            [propertyName]: propertyParserResult.value
           }
         };
       },
@@ -150,59 +150,80 @@ type Context = { [key: string]: unknown };
 
 type ParserResult<T> = { value: T; remaining: string; context?: Context };
 
-// export const normalize = (
-//   shortParserDefinition: ShortParserDefinition
-// ): ParserDefinition => {
-//   if (Array.isArray(shortParserDefinition)) {
-//     return normalize({
-//       type: "object",
-//       properties: shortParserDefinition
-//     });
-//   } else if (
-//     shortParserDefinition.type === "object"
-//   ) {
-//     return {
-//       type: "object",
-//       properties: shortParserDefinition.properties.map(property => {
-//         return typeof property === "string"
-//           ? { [property]: { type: "number" } }
-//           : property;
-//       })
-//     };
-//   } else if ("length" in shortParserDefinition) {
-//     if ("items" in shortParserDefinition) {
-//       return shortParserDefinition;
-//     }
-//     const {
-//       type = "number",
-//       ...restOfImpliedArrayParserDefinition
-//     } = shortParserDefinition;
-//     return {
-//       type: "array",
-//       items: { type },
-//       ...restOfImpliedArrayParserDefinition
-//     };
-//   } else {
-//     return {
-//       type: "number",
-//       ...shortParserDefinition
-//     };
-//   }
-// };
+export const normalize = (
+  shortParserDefinition: ShortParserDefinition
+): ParserDefinition => {
+  if (Array.isArray(shortParserDefinition)) {
+    return normalize({
+      type: "object",
+      properties: shortParserDefinition
+    });
+  } else if (shortParserDefinition.type === "object") {
+    return {
+      type: "object",
+      properties: shortParserDefinition.properties.map(normalizeProperty)
+    };
+  } else if ("length" in shortParserDefinition) {
+    if (shortParserDefinition.type !== "array") {
+      return normalize({
+        type: "array",
+        length: shortParserDefinition.length,
+        items: shortParserDefinition.items
+          ? normalize(shortParserDefinition.items)
+          : // TypeScript seems unable to select the subset ShortParserDefinition
+            // that is correct here. It selects ShortArrayParserDefinition instead of
+            // ShortNumberParserDefiniton | StringParserDefinition. Hence the cast.
+            normalize({ type: shortParserDefinition.type } as
+              | ShortNumberParserDefinition
+              | StringParserDefinition)
+      });
+    } else {
+      return {
+        type: "array",
+        length: shortParserDefinition.length,
+        items: normalize(shortParserDefinition.items || {})
+      };
+    }
+  } else if (!shortParserDefinition.type) {
+    return { type: "number" };
+  } else {
+    return { type: shortParserDefinition.type };
+  }
+};
 
-// export type ShortParserDefinition =
-//   | ParserDefinition
-//   | ImpliedObjectParserDefinition
-//   | ImpliedNumberArrayParserDefinition
-//   | ImpliedNumberArrayPropertyParserDefinition;
+const normalizeProperty = (
+  shortPropertyParserDefinition: ShortPropertyParserDefinition
+): PropertyParserDefinition => {
+  if (typeof shortPropertyParserDefinition === "string") {
+    return { [shortPropertyParserDefinition]: normalize({}) };
+  }
+  const [[propertyName, parserDefinition]] = Object.entries(
+    shortPropertyParserDefinition
+  );
+  return { [propertyName]: normalize(parserDefinition) };
+};
 
-// type ImpliedObjectParserDefinition = ObjectParserDefinition["properties"];
+export type ShortParserDefinition =
+  | ShortObjectParserDefinition
+  | ShortArrayParserDefinition
+  | ShortNumberParserDefinition
+  | StringParserDefinition;
 
-// type ImpliedNumberArrayParserDefinition = {
-//   length: ArrayParserDefinition["length"];
-//   type?: "number" | "string";
-// };
+type ShortObjectParserDefinition =
+  | {
+      type: "object";
+      properties: ShortPropertyParserDefinition[];
+    }
+  | ShortPropertyParserDefinition[];
 
-// type ImpliedNumberArrayPropertyParserDefinition = ImpliedNumberArrayParserDefinition & {
-//   name: string;
-// };
+type ShortPropertyParserDefinition =
+  | { [key: string]: ShortParserDefinition }
+  | string;
+
+type ShortArrayParserDefinition = {
+  length: ArrayParserDefinition["length"];
+  type?: "number" | "string" | "array";
+  items?: ShortParserDefinition;
+};
+
+type ShortNumberParserDefinition = Partial<NumberParserDefinition>;
