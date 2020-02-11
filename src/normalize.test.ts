@@ -1,6 +1,13 @@
 import test from "tape";
 import { normalize } from "./parser";
 
+test("string implies type", t => {
+  const actual = normalize("number");
+  const expected = { type: "number" };
+  t.deepEqual(actual, expected);
+  t.end();
+});
+
 test("no type implies number", t => {
   const actual = normalize({});
   const expected = { type: "number" };
