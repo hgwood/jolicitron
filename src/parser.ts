@@ -29,8 +29,11 @@ export const compileObject = ({
 }: ObjectParserDefinition): Parser<unknown> => {
   return (input, context = {}) => {
     return properties.reduce(
-      (objectParserResult, { name, ...propertyParserDefinition }) => {
-        const propertyParser = compile(propertyParserDefinition);
+      (objectParserResult, propertyParserDefinition) => {
+        const [[name, parserDefinition]] = Object.entries(
+          propertyParserDefinition
+        );
+        const propertyParser = compile(parserDefinition);
         const propertyParserResult = propertyParser(
           objectParserResult.remaining,
           objectParserResult.context
@@ -122,10 +125,10 @@ export type ParserDefinition =
 
 export type ObjectParserDefinition = {
   type: "object";
-  properties: PropertyParser[];
+  properties: PropertyParserDefinition[];
 };
 
-export type PropertyParser = { name: string } & ParserDefinition;
+export type PropertyParserDefinition = { [key: string]: ParserDefinition };
 
 export type ArrayParserDefinition = {
   type: "array";
@@ -147,62 +150,59 @@ type Context = { [key: string]: unknown };
 
 type ParserResult<T> = { value: T; remaining: string; context?: Context };
 
-export const normalize = (
-  shortParserDefinition: ShortParserDefinition
-): ParserDefinition => {
-  if (Array.isArray(shortParserDefinition)) {
-    return {
-      type: "object",
-      properties: shortParserDefinition
-    };
-  } else if (typeof shortParserDefinition === "string") {
-    const propertyParser: PropertyParser = {
-      type: "number",
-      name: shortParserDefinition
-    };
-    return propertyParser;
-  } else if ("length" in shortParserDefinition) {
-    if ("items" in shortParserDefinition) {
-      return shortParserDefinition;
-    }
-    const {
-      type = "number",
-      ...restOfImpliedArrayParserDefinition
-    } = shortParserDefinition;
-    return {
-      type: "array",
-      items: { type },
-      ...restOfImpliedArrayParserDefinition
-    };
-  } else {
-    return {
-      type: "number",
-      ...shortParserDefinition
-    };
-  }
-};
+// export const normalize = (
+//   shortParserDefinition: ShortParserDefinition
+// ): ParserDefinition => {
+//   if (Array.isArray(shortParserDefinition)) {
+//     return normalize({
+//       type: "object",
+//       properties: shortParserDefinition
+//     });
+//   } else if (
+//     shortParserDefinition.type === "object"
+//   ) {
+//     return {
+//       type: "object",
+//       properties: shortParserDefinition.properties.map(property => {
+//         return typeof property === "string"
+//           ? { [property]: { type: "number" } }
+//           : property;
+//       })
+//     };
+//   } else if ("length" in shortParserDefinition) {
+//     if ("items" in shortParserDefinition) {
+//       return shortParserDefinition;
+//     }
+//     const {
+//       type = "number",
+//       ...restOfImpliedArrayParserDefinition
+//     } = shortParserDefinition;
+//     return {
+//       type: "array",
+//       items: { type },
+//       ...restOfImpliedArrayParserDefinition
+//     };
+//   } else {
+//     return {
+//       type: "number",
+//       ...shortParserDefinition
+//     };
+//   }
+// };
 
-export type ShortParserDefinition =
-  | ParserDefinition
-  | ImpliedObjectParserDefinition
-  | ImpliedNumberPropertyParserDefinition
-  | ShortImpliedNumberPropertyParserDefinition
-  | ImpliedNumberArrayParserDefinition
-  | ImpliedNumberArrayPropertyParserDefinition;
+// export type ShortParserDefinition =
+//   | ParserDefinition
+//   | ImpliedObjectParserDefinition
+//   | ImpliedNumberArrayParserDefinition
+//   | ImpliedNumberArrayPropertyParserDefinition;
 
-type ImpliedObjectParserDefinition = ObjectParserDefinition["properties"];
+// type ImpliedObjectParserDefinition = ObjectParserDefinition["properties"];
 
-type ImpliedNumberPropertyParserDefinition = {
-  name: string;
-};
+// type ImpliedNumberArrayParserDefinition = {
+//   length: ArrayParserDefinition["length"];
+//   type?: "number" | "string";
+// };
 
-type ShortImpliedNumberPropertyParserDefinition = string;
-
-type ImpliedNumberArrayParserDefinition = {
-  length: ArrayParserDefinition["length"];
-  type?: "number" | "string";
-};
-
-type ImpliedNumberArrayPropertyParserDefinition = ImpliedNumberArrayParserDefinition & {
-  name: string;
-};
+// type ImpliedNumberArrayPropertyParserDefinition = ImpliedNumberArrayParserDefinition & {
+//   name: string;
+// };

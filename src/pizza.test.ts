@@ -4,16 +4,17 @@ import test from "tape";
 const parserDefinition: ParserDefinition = {
   type: "object",
   properties: [
-    { name: "nrows", type: "number" },
-    { name: "ncolumns", type: "number" },
-    { name: "minIngredients", type: "number" },
-    { name: "maxCells", type: "number" },
+    { nrows: { type: "number" } },
+    { ncolumns: { type: "number" } },
+    { minIngredients: { type: "number" } },
+    { maxCells: { type: "number" } },
     {
-      name: "rows",
-      type: "array",
-      length: "nrows",
-      items: {
-        type: "string"
+      rows: {
+        type: "array",
+        length: "nrows",
+        items: {
+          type: "string"
+        }
       }
     }
   ]

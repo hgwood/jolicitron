@@ -4,57 +4,62 @@ import test from "tape";
 const parserDefinition: ParserDefinition = {
   type: "object",
   properties: [
-    { name: "nrows", type: "number" },
-    { name: "ncols", type: "number" },
-    { name: "ndrones", type: "number" },
-    { name: "nturns", type: "number" },
-    { name: "maxLoad", type: "number" },
-    { name: "nitemTypes", type: "number" },
+    { nrows: { type: "number" } },
+    { ncols: { type: "number" } },
+    { ndrones: { type: "number" } },
+    { nturns: { type: "number" } },
+    { maxLoad: { type: "number" } },
+    { nitemTypes: { type: "number" } },
     {
-      name: "weights",
-      type: "array",
-      length: "nitemTypes",
-      items: { type: "number" }
-    },
-    { name: "nwarehouses", type: "number" },
-    {
-      name: "warehouses",
-      type: "array",
-      length: "nwarehouses",
-      items: {
-        type: "object",
-        properties: [
-          { name: "x", type: "number" },
-          { name: "y", type: "number" },
-          {
-            name: "items",
-            type: "array",
-            length: "nitemTypes",
-            items: { type: "number" }
-          }
-        ]
+      weights: {
+        type: "array",
+        length: "nitemTypes",
+        items: { type: "number" }
       }
     },
-    { name: "norders", type: "number" },
+    { nwarehouses: { type: "number" } },
     {
-      name: "orders",
-      type: "array",
-      length: "norders",
-      items: {
-        type: "object",
-        properties: [
-          { name: "x", type: "number" },
-          { name: "y", type: "number" },
-          { name: "nitems", type: "number" },
-          {
-            name: "items",
-            type: "array",
-            length: "nitems",
-            items: {
-              type: "number"
+      warehouses: {
+        type: "array",
+        length: "nwarehouses",
+        items: {
+          type: "object",
+          properties: [
+            { x: { type: "number" } },
+            { y: { type: "number" } },
+            {
+              items: {
+                type: "array",
+                length: "nitemTypes",
+                items: { type: "number" }
+              }
             }
-          }
-        ]
+          ]
+        }
+      }
+    },
+    { norders: { type: "number" } },
+    {
+      orders: {
+        type: "array",
+        length: "norders",
+        items: {
+          type: "object",
+          properties: [
+            { x: { type: "number" } },
+            { y: { type: "number" } },
+            { nitems: { type: "number" } },
+            {
+              items: {
+                type: "array",
+                length: "nitems",
+                items: {
+                  type: "number"
+                }
+              }
+            }
+          ]
+        }
       }
     }
   ]
