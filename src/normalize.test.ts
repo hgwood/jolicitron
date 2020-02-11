@@ -1,60 +1,62 @@
-// import test from "tape";
-// import { normalize, ObjectParserDefinition } from "./parser";
+import test from "tape";
+import { normalize } from "./parser";
 
-// test("number type is implied", t => {
-//   const expected = { name: "name", type: "number" };
-//   const actual = normalize({ name: "name" });
-//   t.deepEqual(actual, expected);
-//   t.end();
-// });
+test("no type implies number", t => {
+  const actual = normalize({});
+  const expected = { type: "number" };
+  t.deepEqual(actual, expected);
+  t.end();
+});
 
-// test("array is implied object", t => {
-//   const properties: ObjectParserDefinition["properties"] = [
-//     { name: "name", type: "number" }
-//   ];
-//   const expected = { type: "object", properties };
-//   const actual = normalize(properties);
-//   t.deepEqual(actual, expected);
-//   t.end();
-// });
+test("array implies object", t => {
+  const actual = normalize([{ myProperty: { type: "number" } }]);
+  const expected = {
+    type: "object",
+    properties: [{ myProperty: { type: "number" } }]
+  };
+  t.deepEqual(actual, expected);
+  t.end();
+});
 
-// test("string is implied number property", t => {
-//   const expected = { name: "name", type: "number" };
-//   const actual = normalize("name");
-//   t.deepEqual(actual, expected);
-//   t.end();
-// });
+test("string for a property implies number property", t => {
+  const actual = normalize({ type: "object", properties: ["myProperty"] });
+  const expected = {
+    type: "object",
+    properties: [{ myProperty: { type: "number" } }]
+  };
+  t.deepEqual(actual, expected);
+  t.end();
+});
 
-// test("length is implied array", t => {
-//   const expected = {
-//     type: "array",
-//     length: "length",
-//     items: { type: "string" }
-//   };
-//   const actual = normalize({ length: "length", type: "string" });
-//   t.deepEqual(actual, expected);
-//   t.end();
-// });
+test("length implies array", t => {
+  const actual = normalize({ length: "length" }).type;
+  const expected = "array";
+  t.deepEqual(actual, expected);
+  t.end();
+});
 
-// test("property with length is implied array property", t => {
-//   const expected = {
-//     name: "name",
-//     type: "array",
-//     length: "length",
-//     items: { type: "string" }
-//   };
-//   const actual = normalize({ name: "name", length: "length", type: "string" });
-//   t.deepEqual(actual, expected);
-//   t.end();
-// });
+test("length implies array even if type is specified", t => {
+  const actual = normalize({ length: "length", type: "number" }).type;
+  const expected = "array";
+  t.deepEqual(actual, expected);
+  t.end();
+});
 
-// test("default type for implied array is number", t => {
-//   const expected = {
-//     type: "array",
-//     length: "length",
-//     items: { type: "number" }
-//   };
-//   const actual = normalize({ length: "length" });
-//   t.deepEqual(actual, expected);
-//   t.end();
-// });
+test("type of implied array is implied to be item type", t => {
+  // @ts-ignore
+  const actual = normalize({ length: "length", type: "number" }).items?.type;
+  const expected = "number";
+  t.deepEqual(actual, expected);
+  t.end();
+});
+
+test("array without item type implies array of number", t => {
+  const actual = normalize({ type: "array", length: "length" });
+  const expected = {
+    type: "array",
+    length: "length",
+    items: { type: "number" }
+  };
+  t.deepEqual(actual, expected);
+  t.end();
+});
