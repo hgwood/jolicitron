@@ -158,41 +158,33 @@ type ParserResult<T> = { value: T; remaining: string[]; context?: Context };
 export const normalize = (
   shortParserDefinition: ShortParserDefinition
 ): ParserDefinition => {
-  if (Array.isArray(shortParserDefinition)) {
-    return normalize({
-      type: "object",
-      properties: shortParserDefinition
-    });
-  } else if (shortParserDefinition.type === "object") {
-    return {
-      type: "object",
-      properties: shortParserDefinition.properties.map(normalizeProperty)
-    };
+  if (
+    Array.isArray(shortParserDefinition) ||
+    shortParserDefinition.type === "object"
+  ) {
+    return normalizeObject(shortParserDefinition);
   } else if ("length" in shortParserDefinition) {
-    if (shortParserDefinition.type !== "array") {
-      return normalize({
-        type: "array",
-        length: shortParserDefinition.length,
-        items: shortParserDefinition.items
-          ? normalize(shortParserDefinition.items)
-          : // TypeScript seems unable to select the subset ShortParserDefinition
-            // that is correct here. It selects ShortArrayParserDefinition instead of
-            // ShortNumberParserDefiniton | StringParserDefinition. Hence the cast.
-            normalize({ type: shortParserDefinition.type } as
-              | ShortNumberParserDefinition
-              | StringParserDefinition)
-      });
-    } else {
-      return {
-        type: "array",
-        length: shortParserDefinition.length,
-        items: normalize(shortParserDefinition.items || {})
-      };
-    }
+    return normalizeArray(shortParserDefinition);
   } else if (!shortParserDefinition.type) {
     return { type: "number" };
   } else {
     return { type: shortParserDefinition.type };
+  }
+};
+
+const normalizeObject = (
+  shortObjectParserDefinition: ShortObjectParserDefinition
+): ObjectParserDefinition => {
+  if (Array.isArray(shortObjectParserDefinition)) {
+    return normalizeObject({
+      type: "object",
+      properties: shortObjectParserDefinition
+    });
+  } else {
+    return {
+      type: "object",
+      properties: shortObjectParserDefinition.properties.map(normalizeProperty)
+    };
   }
 };
 
@@ -206,6 +198,31 @@ const normalizeProperty = (
     shortPropertyParserDefinition
   );
   return { [propertyName]: normalize(parserDefinition) };
+};
+
+const normalizeArray = (
+  shortArrayParserDefinition: ShortArrayParserDefinition
+): ArrayParserDefinition => {
+  if (shortArrayParserDefinition.type !== "array") {
+    return normalizeArray({
+      type: "array",
+      length: shortArrayParserDefinition.length,
+      items: shortArrayParserDefinition.items
+        ? normalize(shortArrayParserDefinition.items)
+        : // TypeScript seems unable to select the subset ShortParserDefinition
+          // that is correct here. It selects ShortArrayParserDefinition instead of
+          // ShortNumberParserDefiniton | StringParserDefinition. Hence the cast.
+          normalize({ type: shortArrayParserDefinition.type } as
+            | ShortNumberParserDefinition
+            | StringParserDefinition)
+    });
+  } else {
+    return {
+      type: "array",
+      length: shortArrayParserDefinition.length,
+      items: normalize(shortArrayParserDefinition.items || {})
+    };
+  }
 };
 
 export type ShortParserDefinition =
