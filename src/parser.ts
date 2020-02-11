@@ -66,7 +66,7 @@ export const compileArray = ({
         `expected '${length}' to be a safe positive integer but found '${context?.[length]}'`
       );
     }
-    return Array.from({ length: lengthValue } as ArrayLike<number>).reduce(
+    return times(lengthValue).reduce(
       arrayParserResult => {
         const itemParser = compile(items);
         const itemParserResult = itemParser(
@@ -227,3 +227,5 @@ type ShortArrayParserDefinition = {
 };
 
 type ShortNumberParserDefinition = Partial<NumberParserDefinition>;
+
+const times = (n: number) => Array.from({ length: n } as ArrayLike<number>);
