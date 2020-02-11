@@ -20,7 +20,7 @@
   "main": "jolicitron.js",
   "tonicExampleFilename": "examples/data-center/data-center.tonic.js",
   "scripts": {
-    "test": "tape test/*.test.js | tap-spec",
+    "test": "tape --require ts-node/register src/*.test.ts | tap-spec",
     "cover": "nyc tape test/*.js",
     "lint": "eslint *.js test/*.js examples/*/*.js",
     "prettier": "prettier --write \"*.js\" \"test/*.js\" \"examples/*/*.js\""
