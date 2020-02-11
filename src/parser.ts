@@ -159,7 +159,9 @@ type ParserResult<T> = { value: T; remaining: string[]; context?: Context };
 export const normalize = (
   shortParserDefinition: ShortParserDefinition
 ): ParserDefinition => {
-  if (
+  if (typeof shortParserDefinition === "string") {
+    return { type: shortParserDefinition };
+  } else if (
     Array.isArray(shortParserDefinition) ||
     shortParserDefinition.type === "object"
   ) {
@@ -244,7 +246,9 @@ export type ShortParserDefinition =
   | ShortObjectParserDefinition
   | ShortArrayParserDefinition
   | ShortNumberParserDefinition
-  | StringParserDefinition;
+  | StringParserDefinition
+  | "number"
+  | "string";
 
 type ShortObjectParserDefinition =
   | {

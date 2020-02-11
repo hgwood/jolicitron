@@ -46,7 +46,7 @@ test("parses the pizza example correctly using the shortest definition possible"
     "ncolumns",
     "minIngredients",
     "maxCells",
-    ["rows", "nrows", { type: "string" }]
+    ["rows", "nrows", "string"]
   ];
   const actual = jolicitron(parserDefinition, input);
   t.deepEqual(actual, expected);
