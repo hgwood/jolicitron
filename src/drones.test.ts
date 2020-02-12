@@ -1,4 +1,8 @@
-import jolicitron, { ParserDefinition, ShortParserDefinition } from "./parser";
+import jolicitron, {
+  ParserDefinition,
+  ShortParserDefinition,
+  parseStringDefinition
+} from "./parser";
 import test from "tape";
 
 const input = `
@@ -43,71 +47,72 @@ const expected = {
   ]
 };
 
-test("parses the drone example correctly using fully explicit definition", t => {
-  const parserDefinition: ParserDefinition = {
-    type: "object",
-    properties: [
-      { nrows: { type: "number" } },
-      { ncols: { type: "number" } },
-      { ndrones: { type: "number" } },
-      { nturns: { type: "number" } },
-      { maxLoad: { type: "number" } },
-      { nitemTypes: { type: "number" } },
-      {
-        weights: {
-          type: "array",
-          length: "nitemTypes",
-          items: { type: "number" }
-        }
-      },
-      { nwarehouses: { type: "number" } },
-      {
-        warehouses: {
-          type: "array",
-          length: "nwarehouses",
-          items: {
-            type: "object",
-            properties: [
-              { x: { type: "number" } },
-              { y: { type: "number" } },
-              {
-                items: {
-                  type: "array",
-                  length: "nitemTypes",
-                  items: { type: "number" }
-                }
+const explicitParserDefinition: ParserDefinition = {
+  type: "object",
+  properties: [
+    { nrows: { type: "number" } },
+    { ncols: { type: "number" } },
+    { ndrones: { type: "number" } },
+    { nturns: { type: "number" } },
+    { maxLoad: { type: "number" } },
+    { nitemTypes: { type: "number" } },
+    {
+      weights: {
+        type: "array",
+        length: "nitemTypes",
+        items: { type: "number" }
+      }
+    },
+    { nwarehouses: { type: "number" } },
+    {
+      warehouses: {
+        type: "array",
+        length: "nwarehouses",
+        items: {
+          type: "object",
+          properties: [
+            { x: { type: "number" } },
+            { y: { type: "number" } },
+            {
+              items: {
+                type: "array",
+                length: "nitemTypes",
+                items: { type: "number" }
               }
-            ]
-          }
-        }
-      },
-      { norders: { type: "number" } },
-      {
-        orders: {
-          type: "array",
-          length: "norders",
-          items: {
-            type: "object",
-            properties: [
-              { x: { type: "number" } },
-              { y: { type: "number" } },
-              { nitems: { type: "number" } },
-              {
-                items: {
-                  type: "array",
-                  length: "nitems",
-                  items: {
-                    type: "number"
-                  }
-                }
-              }
-            ]
-          }
+            }
+          ]
         }
       }
-    ]
-  };
-  const actual = jolicitron(parserDefinition, input);
+    },
+    { norders: { type: "number" } },
+    {
+      orders: {
+        type: "array",
+        length: "norders",
+        items: {
+          type: "object",
+          properties: [
+            { x: { type: "number" } },
+            { y: { type: "number" } },
+            { nitems: { type: "number" } },
+            {
+              items: {
+                type: "array",
+                length: "nitems",
+                items: {
+                  type: "number"
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+};
+
+test("parses the drone example correctly using fully explicit definition", t => {
+  const actual = jolicitron(explicitParserDefinition, input);
   t.deepEqual(actual, expected);
   t.end();
 });
@@ -127,6 +132,20 @@ test("parses the drone example correctly using shortest definition possible", t 
     ["orders", "norders", ["x", "y", "nitems", ["items", "nitems"]]]
   ];
   const actual = jolicitron(parserDefinition, input);
+  t.deepEqual(actual, expected);
+  t.end();
+});
+
+test("parses the drone example correctly using string definition", t => {
+  const actual = parseStringDefinition(`{
+    nrows ncols ndrones nturns maxLoad nitemTypes
+    weights[nitemTypes]
+    nwarehouses
+    warehouses<{x y items[nitemTypes]}>[nwarehouses]
+    norders
+    orders<{x y nitems items[nitems]}>[norders]
+  }`);
+  const expected = explicitParserDefinition;
   t.deepEqual(actual, expected);
   t.end();
 });
