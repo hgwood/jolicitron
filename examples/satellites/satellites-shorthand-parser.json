@@ -1,0 +1,27 @@
+[
+  "nturns",
+  "nsatellites",
+  [
+    "satellites",
+    "nsatellites",
+    [
+      "latitude",
+      "longitude",
+      "velocity",
+      "maximumOrientationChange",
+      "maximumOrientation"
+    ]
+  ],
+  "nimageCollections",
+  [
+    "imageCollections",
+    "nimageCollections",
+    [
+      "value",
+      "nlocations",
+      "ntimeRanges",
+      ["locations", "nlocations", ["latitude", "longitude"]],
+      ["timeRanges", "ntimeRanges", ["start", "end"]]
+    ]
+  ]
+]

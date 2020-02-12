@@ -1,0 +1,18 @@
+{
+  "type": "object",
+  "properties": [
+    { "nrows": { "type": "number" } },
+    { "ncolumns": { "type": "number" } },
+    { "minIngredients": { "type": "number" } },
+    { "maxCells": { "type": "number" } },
+    {
+      "rows": {
+        "type": "array",
+        "length": "nrows",
+        "items": {
+          "type": "string"
+        }
+      }
+    }
+  ]
+}

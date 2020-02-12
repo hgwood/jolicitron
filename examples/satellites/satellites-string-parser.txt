@@ -1,0 +1,25 @@
+{
+  nturns
+  nsatellites
+  satellites<{
+    latitude
+    longitude
+    velocity
+    maximumOrientationChange
+    maximumOrientation
+  }>[nsatellites]
+  nimageCollections
+  imageCollections<{
+    value
+    nlocations
+    ntimeRanges
+    locations<{
+      latitude
+      longitude
+    }>[nlocations]
+    timeRanges<{
+      start
+      end
+    }>[ntimeRanges]
+  }>[nimageCollections]
+}

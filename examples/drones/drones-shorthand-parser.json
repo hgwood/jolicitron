@@ -1,0 +1,13 @@
+[
+  "nrows",
+  "ncols",
+  "ndrones",
+  "nturns",
+  "maxLoad",
+  "nitemTypes",
+  ["weights", "nitemTypes"],
+  "nwarehouses",
+  ["warehouses", "nwarehouses", ["x", "y", ["items", "nitemTypes"]]],
+  "norders",
+  ["orders", "norders", ["x", "y", "nitems", ["items", "nitems"]]]
+]

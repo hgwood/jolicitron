@@ -1,5 +1,6 @@
 {
   "nturns": 3600,
+  "nsatellites": 2,
   "satellites": [
     {
       "latitude": 170000,
@@ -16,9 +17,12 @@
       "maximumOrientation": 500
     }
   ],
+  "nimageCollections": 3,
   "imageCollections": [
     {
       "value": 100,
+      "nlocations": 1,
+      "ntimeRanges": 1,
       "locations": [
         {
           "latitude": 175958,
@@ -34,6 +38,8 @@
     },
     {
       "value": 100,
+      "nlocations": 1,
+      "ntimeRanges": 2,
       "locations": [
         {
           "latitude": 175889,
@@ -53,6 +59,8 @@
     },
     {
       "value": 300,
+      "nlocations": 2,
+      "ntimeRanges": 1,
       "locations": [
         {
           "latitude": 175958,
