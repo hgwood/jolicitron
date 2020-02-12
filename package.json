@@ -2,6 +2,23 @@
   "name": "jolicitron",
   "version": "2.1.0",
   "description": "A parser builder for Google Hash Code problem inputs",
+  "main": "jolicitron.js",
+  "scripts": {
+    "test": "tape --require ts-node/register 'src/*.test.ts' | tap-spec",
+    "prettier": "prettier --write \"src/*.ts\" \"examples/*/*.json\""
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/tape": "^4.2.33",
+    "prettier": "^1.19.1",
+    "tap-spec": "^5.0.0",
+    "tape": "^4.13.0",
+    "ts-node": "^8.6.2",
+    "typescript": "^3.7.5"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
   "keywords": [
     "google",
     "hash code",
@@ -16,29 +33,5 @@
   "bugs": {
     "url": "https://github.com/hgwood/jolicitron/issues"
   },
-  "homepage": "https://github.com/hgwood/jolicitron",
-  "main": "jolicitron.js",
-  "tonicExampleFilename": "examples/data-center/data-center.tonic.js",
-  "scripts": {
-    "test": "tape --require ts-node/register 'src/*.test.ts' | tap-spec",
-    "cover": "nyc tape test/*.js",
-    "lint": "eslint *.js test/*.js examples/*/*.js",
-    "prettier": "prettier --write \"*.js\" \"test/*.js\" \"examples/*/*.js\""
-  },
-  "dependencies": {
-    "lodash": "^4.17.15"
-  },
-  "devDependencies": {
-    "@types/tape": "^4.2.33",
-    "eslint": "^6.8.0",
-    "nyc": "^15.0.0",
-    "prettier": "^1.19.1",
-    "tap-spec": "^5.0.0",
-    "tape": "^4.13.0",
-    "ts-node": "^8.6.2",
-    "typescript": "^3.7.5"
-  },
-  "engines": {
-    "node": ">=6.0.0"
-  }
+  "homepage": "https://github.com/hgwood/jolicitron"
 }
