@@ -1,0 +1,64 @@
+{
+  "type": "object",
+  "properties": [
+    { "nturns": { "type": "number" } },
+    { "nsatellites": { "type": "number" } },
+    {
+      "satellites": {
+        "type": "array",
+        "length": "nsatellites",
+        "items": {
+          "type": "object",
+          "properties": [
+            { "latitude": { "type": "number" } },
+            { "longitude": { "type": "number" } },
+            { "velocity": { "type": "number" } },
+            { "maximumOrientationChange": { "type": "number" } },
+            { "maximumOrientation": { "type": "number" } }
+          ]
+        }
+      }
+    },
+    { "nimageCollections": { "type": "number" } },
+    {
+      "imageCollections": {
+        "type": "array",
+        "length": "nimageCollections",
+        "items": {
+          "type": "object",
+          "properties": [
+            { "value": { "type": "number" } },
+            { "nlocations": { "type": "number" } },
+            { "ntimeRanges": { "type": "number" } },
+            {
+              "locations": {
+                "type": "array",
+                "length": "nlocations",
+                "items": {
+                  "type": "object",
+                  "properties": [
+                    { "latitude": { "type": "number" } },
+                    { "longitude": { "type": "number" } }
+                  ]
+                }
+              }
+            },
+            {
+              "timeRanges": {
+                "type": "array",
+                "length": "ntimeRanges",
+                "items": {
+                  "type": "object",
+                  "properties": [
+                    { "start": { "type": "number" } },
+                    { "end": { "type": "number" } }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

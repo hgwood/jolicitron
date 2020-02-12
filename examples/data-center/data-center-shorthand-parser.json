@@ -1,0 +1,9 @@
+[
+  "nrows",
+  "nslots",
+  "nunavailables",
+  "npools",
+  "nservers",
+  ["unavailables", "nunavailables", ["x", "y"]],
+  ["servers", "nservers", ["size", "capacity"]]
+]

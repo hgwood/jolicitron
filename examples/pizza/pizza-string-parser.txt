@@ -1,0 +1,4 @@
+{
+  nrows ncolumns minIngredients maxCells
+  rows<string>[nrows]
+}
