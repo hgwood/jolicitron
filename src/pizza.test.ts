@@ -1,4 +1,8 @@
-import jolicitron, { ParserDefinition, ShortParserDefinition } from "./parser";
+import jolicitron, {
+  ParserDefinition,
+  ShortParserDefinition,
+  parseStringDefinition
+} from "./parser";
 import test from "tape";
 
 const input = `
@@ -16,26 +20,27 @@ const expected = {
   rows: ["TTTTT", "TMMMT", "TTTTT"]
 };
 
-test("parses the pizza example correctly using the fully explicit definition", t => {
-  const parserDefinition: ParserDefinition = {
-    type: "object",
-    properties: [
-      { nrows: { type: "number" } },
-      { ncolumns: { type: "number" } },
-      { minIngredients: { type: "number" } },
-      { maxCells: { type: "number" } },
-      {
-        rows: {
-          type: "array",
-          length: "nrows",
-          items: {
-            type: "string"
-          }
+const explicitParserDefinition: ParserDefinition = {
+  type: "object",
+  properties: [
+    { nrows: { type: "number" } },
+    { ncolumns: { type: "number" } },
+    { minIngredients: { type: "number" } },
+    { maxCells: { type: "number" } },
+    {
+      rows: {
+        type: "array",
+        length: "nrows",
+        items: {
+          type: "string"
         }
       }
-    ]
-  };
-  const actual = jolicitron(parserDefinition, input);
+    }
+  ]
+};
+
+test("parses the pizza example correctly using the fully explicit definition", t => {
+  const actual = jolicitron(explicitParserDefinition, input);
   t.deepEqual(actual, expected);
   t.end();
 });
@@ -49,6 +54,16 @@ test("parses the pizza example correctly using the shortest definition possible"
     ["rows", "nrows", "string"]
   ];
   const actual = jolicitron(parserDefinition, input);
+  t.deepEqual(actual, expected);
+  t.end();
+});
+
+test("parses the pizza example correctly using string definition", t => {
+  const actual = parseStringDefinition(`{
+    nrows ncolumns minIngredients maxCells
+    rows<string>[nrows]
+  }`);
+  const expected = explicitParserDefinition;
   t.deepEqual(actual, expected);
   t.end();
 });
