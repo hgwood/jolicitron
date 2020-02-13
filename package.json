@@ -4,6 +4,7 @@
   "description": "A parser builder for Google Hash Code problem inputs",
   "scripts": {
     "test": "tape --require ts-node/register \"src/*.test.ts\" | tap-spec",
+    "test:watch": "nodemon --exec tape --require ts-node/register \"src/*.test.ts\"",
     "prettier": "prettier --write \"src/*.ts\" \"examples/*/*.json\"",
     "build": "tsc",
     "build:clean": "rm -r dist"
@@ -11,6 +12,7 @@
   "dependencies": {},
   "devDependencies": {
     "@types/tape": "^4.2.33",
+    "nodemon": "^2.0.2",
     "prettier": "^1.19.1",
     "tap-spec": "^5.0.0",
     "tape": "^4.13.0",
