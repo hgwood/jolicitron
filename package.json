@@ -2,7 +2,6 @@
   "name": "jolicitron",
   "version": "2.1.0",
   "description": "A parser builder for Google Hash Code problem inputs",
-  "main": "jolicitron.js",
   "scripts": {
     "test": "tape --require ts-node/register 'src/*.test.ts' | tap-spec",
     "prettier": "prettier --write \"src/*.ts\" \"examples/*/*.json\""
