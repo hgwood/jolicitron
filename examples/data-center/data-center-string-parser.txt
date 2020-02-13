@@ -1,5 +1,0 @@
-{
-  nrows nslots nunavailables npools nservers
-  unavailables<{x y}>[nunavailables]
-  servers<{size capacity}>[nservers]
-}
