@@ -1,7 +1,7 @@
 import test from "tape";
 import fs from "fs";
 import path from "path";
-import jolicitron, { parseStringDefinition } from "../src/parser";
+import jolicitron from "../src/parser";
 
 const examplesDirectory = path.join(__dirname, "../examples");
 const readJson = (fileName: string) => require(fileName);
@@ -26,14 +26,6 @@ fs.readdirSync(examplesDirectory).forEach(exampleName => {
       "shorthand",
       readJson(
         path.join(exampleDirectory, `${exampleName}-shorthand-parser.json`)
-      )
-    ],
-    [
-      "string",
-      parseStringDefinition(
-        readText(
-          path.join(exampleDirectory, `${exampleName}-string-parser.txt`)
-        )
       )
     ]
   ].forEach(([parserName, parserDefinition]) => {

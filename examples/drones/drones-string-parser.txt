@@ -1,8 +1,0 @@
-{
-  nrows ncols ndrones nturns maxLoad nitemTypes
-  weights[nitemTypes]
-  nwarehouses
-  warehouses<{x y items[nitemTypes]}>[nwarehouses]
-  norders
-  orders<{x y nitems items[nitems]}>[norders]
-}
