@@ -4,7 +4,9 @@
   "description": "A parser builder for Google Hash Code problem inputs",
   "scripts": {
     "test": "tape --require ts-node/register \"src/*.test.ts\" | tap-spec",
-    "prettier": "prettier --write \"src/*.ts\" \"examples/*/*.json\""
+    "prettier": "prettier --write \"src/*.ts\" \"examples/*/*.json\"",
+    "build": "tsc",
+    "build:clean": "rm -r dist"
   },
   "dependencies": {},
   "devDependencies": {
