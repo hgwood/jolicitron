@@ -1,5 +1,5 @@
 import test from "tape";
-import { normalize } from "./parser";
+import { normalize } from "./normalize";
 
 test("string implies type", t => {
   const actual = normalize("number");

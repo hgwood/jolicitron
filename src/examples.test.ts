@@ -1,7 +1,7 @@
 import test from "tape";
 import fs from "fs";
 import path from "path";
-import jolicitron from "../src/parser";
+import jolicitron from "../src";
 
 const examplesDirectory = path.join(__dirname, "../examples");
 const readJson = (fileName: string) => require(fileName);
