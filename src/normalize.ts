@@ -5,7 +5,7 @@ import {
   ArrayParserDefinition,
   StringParserDefinition,
   NumberParserDefinition
-} from "./compiler";
+} from "./compile";
 
 export const normalize = (
   shortParserDefinition: ShortParserDefinition
@@ -77,7 +77,7 @@ const normalizeArray = (
       length: shortArrayParserDefinition.length,
       items: shortArrayParserDefinition.items
         ? normalize(shortArrayParserDefinition.items)
-        : // TypeScript seems unable to select the subset ShortParserDefinition
+        : // TypeScript seems unable to select the subset of ShortParserDefinition
           // that is correct here. It selects ShortArrayParserDefinition instead of
           // ShortNumberParserDefiniton | StringParserDefinition. Hence the cast.
           normalize({ type: shortArrayParserDefinition.type } as

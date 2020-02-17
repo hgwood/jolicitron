@@ -1,4 +1,4 @@
-import { compile } from "./compiler";
+import { compile } from "./compile";
 import { ShortParserDefinition, normalize } from "./normalize";
 import { tokenize } from "./tokenize";
 
