@@ -18,13 +18,15 @@ export const compile = (
 export const compileObject = ({
   properties
 }: ObjectParserDefinition): Parser<unknown> => {
+  const propertyParsers = properties.map(propertyParserDefinition => {
+    const [[propertyName, parserDefinition]] = Object.entries(
+      propertyParserDefinition
+    );
+    return [propertyName, compile(parserDefinition)] as const;
+  })
   return (tokens, context = {}) => {
-    return properties.reduce(
-      (objectParserResult, propertyParserDefinition) => {
-        const [[propertyName, parserDefinition]] = Object.entries(
-          propertyParserDefinition
-        );
-        const propertyParser = compile(parserDefinition);
+    return propertyParsers.reduce(
+      (objectParserResult, [propertyName, propertyParser]) => {
         const propertyParserResult = propertyParser(
           objectParserResult.remaining,
           objectParserResult.context
@@ -50,6 +52,7 @@ export const compileArray = ({
   length,
   items
 }: ArrayParserDefinition): Parser<unknown[]> => {
+  const itemParser = compile(items);
   return (tokens, context = {}) => {
     const lengthValue = Number(context?.[length]);
     if (!Number.isSafeInteger(lengthValue) || lengthValue < 0) {
@@ -59,7 +62,6 @@ export const compileArray = ({
     }
     return times(lengthValue).reduce(
       arrayParserResult => {
-        const itemParser = compile(items);
         const itemParserResult = itemParser(
           arrayParserResult.remaining,
           context
