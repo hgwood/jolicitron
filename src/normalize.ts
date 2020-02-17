@@ -5,7 +5,7 @@ import {
   ArrayParserDefinition,
   StringParserDefinition,
   NumberParserDefinition
-} from "./compiler";
+} from "./compile";
 
 export const normalize = (
   shortParserDefinition: ShortParserDefinition
