@@ -1,0 +1,11 @@
+[
+  "nbooks",
+  "nlibraries",
+  "ndays",
+  ["scores", "nbooks"],
+  [
+    "libraries",
+    "nlibraries",
+    ["nbooks", "signupDuration", "shipCapacity", ["books", "nbooks"]]
+  ]
+]
