@@ -1,4 +1,4 @@
-import test from "tape";
+import { test } from "tap";
 import jolicitron from "../../src";
 import { readTestData } from "../../test/test-utils";
 
