@@ -1,4 +1,4 @@
-import test from "tape";
+import { test } from "tap";
 import { normalize } from "./normalize";
 
 test("string implies type", t => {
