@@ -1,5 +1,3 @@
-import { times } from "./utils/times";
-
 export const compile = (
   parserDefinition: ParserDefinition
 ): Parser<unknown> => {
@@ -23,28 +21,21 @@ export const compileObject = ({
       propertyParserDefinition
     );
     return [propertyName, compile(parserDefinition)] as const;
-  })
-  return (tokens, context = {}) => {
-    return propertyParsers.reduce(
-      (objectParserResult, [propertyName, propertyParser]) => {
-        const propertyParserResult = propertyParser(
-          objectParserResult.remaining,
-          objectParserResult.context
-        );
-        return {
-          value: {
-            ...objectParserResult.value,
-            [propertyName]: propertyParserResult.value
-          },
-          remaining: propertyParserResult.remaining,
-          context: {
-            ...objectParserResult.context,
-            [propertyName]: propertyParserResult.value
-          }
-        };
-      },
-      { value: {}, remaining: tokens, context }
-    );
+  });
+  return (tokens, currentTokenIndex = 0, context = {}) => {
+    const result = { value: {}, currentTokenIndex, context };
+    for (const [propertyName, propertyParser] of propertyParsers) {
+      const propertyParserResult = propertyParser(
+        tokens,
+        result.currentTokenIndex,
+        result.context
+      );
+      // @ts-ignore
+      result.value[propertyName] = propertyParserResult.value;
+      result.currentTokenIndex = propertyParserResult.currentTokenIndex;
+      result.context[propertyName] = propertyParserResult.value;
+    }
+    return result;
   };
 };
 
@@ -53,45 +44,44 @@ export const compileArray = ({
   items
 }: ArrayParserDefinition): Parser<unknown[]> => {
   const itemParser = compile(items);
-  return (tokens, context = {}) => {
+  return (tokens, currentTokenIndex = 0, context = {}) => {
     const lengthValue = Number(context?.[length]);
     if (!Number.isSafeInteger(lengthValue) || lengthValue < 0) {
       throw new RangeError(
         `expected '${length}' to be a safe positive integer but found '${context?.[length]}'`
       );
     }
-    return times(lengthValue).reduce(
-      arrayParserResult => {
-        const itemParserResult = itemParser(
-          arrayParserResult.remaining,
-          context
-        );
-        return {
-          ...itemParserResult,
-          value: [...arrayParserResult.value, itemParserResult.value]
-        };
-      },
-      {
-        value: [],
-        remaining: tokens,
+    const result = {
+      value: [],
+      currentTokenIndex,
+      context
+    } as ParserResult<unknown[]>;
+    for (let i = 0; i < lengthValue; i++) {
+      const itemParserResult = itemParser(
+        tokens,
+        result.currentTokenIndex,
         context
-      } as ParserResult<unknown[]>
-    );
+      );
+      result.currentTokenIndex = itemParserResult.currentTokenIndex;
+      result.context = itemParserResult.context;
+      result.value.push(itemParserResult.value);
+    }
+    return result;
   };
 };
 
 export const compileNumber = (
   parserDefinition: NumberParserDefinition
 ): Parser<number> => {
-  return (tokens, context = {}) => {
-    const [nextToken, ...remaining] = tokens;
+  return (tokens, currentTokenIndex = 0, context = {}) => {
+    const nextToken = tokens[currentTokenIndex];
     const value = Number(nextToken);
     if (Number.isNaN(value)) {
       throw new RangeError(`expected number but found '${value}'`);
     }
     return {
       value,
-      remaining,
+      currentTokenIndex: currentTokenIndex + 1,
       context
     };
   };
@@ -100,11 +90,10 @@ export const compileNumber = (
 export const compileString = (
   parserDefinition: StringParserDefinition
 ): Parser<string> => {
-  return (tokens, context = {}) => {
-    const [nextToken, ...remaining] = tokens;
+  return (tokens, currentTokenIndex = 0, context = {}) => {
     return {
-      value: nextToken,
-      remaining,
+      value: tokens[currentTokenIndex],
+      currentTokenIndex: currentTokenIndex + 1,
       context
     };
   };
@@ -137,8 +126,16 @@ export type StringParserDefinition = {
   type: "string";
 };
 
-type Parser<T> = (tokens: string[], context?: Context) => ParserResult<T>;
+type Parser<T> = (
+  tokens: string[],
+  currentTokenIndex?: number,
+  context?: Context
+) => ParserResult<T>;
 
 type Context = { [key: string]: unknown };
 
-type ParserResult<T> = { value: T; remaining: string[]; context?: Context };
+type ParserResult<T> = {
+  value: T;
+  currentTokenIndex: number;
+  context?: Context;
+};
