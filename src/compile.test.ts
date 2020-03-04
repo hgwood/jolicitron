@@ -6,7 +6,7 @@ test("founding a non-number value when expecting a number throws an error", t =>
     type: "number"
   });
   t.throws(() => {
-    parser(["not a number"]);
+    parser(["not a number"], 0, {});
   }, RangeError);
   t.end();
 });
@@ -18,7 +18,7 @@ test("refering to unknown variable raises an error", t => {
     items: { type: "number" }
   });
   t.throws(() => {
-    parser(["1", "2", "3"]);
+    parser(["1", "2", "3"], 0, {});
   }, RangeError);
   t.end();
 });

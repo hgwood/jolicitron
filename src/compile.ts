@@ -22,7 +22,7 @@ export const compileObject = ({
     );
     return [propertyName, compile(parserDefinition)] as const;
   });
-  return (tokens, currentTokenIndex = 0, context = {}) => {
+  return (tokens, currentTokenIndex , context) => {
     const result = { value: {}, currentTokenIndex, context };
     for (const [propertyName, propertyParser] of propertyParsers) {
       const propertyParserResult = propertyParser(
@@ -44,7 +44,7 @@ export const compileArray = ({
   items
 }: ArrayParserDefinition): Parser<unknown[]> => {
   const itemParser = compile(items);
-  return (tokens, currentTokenIndex = 0, context = {}) => {
+  return (tokens, currentTokenIndex , context) => {
     const lengthValue = Number(context?.[length]);
     if (!Number.isSafeInteger(lengthValue) || lengthValue < 0) {
       throw new RangeError(
@@ -73,7 +73,7 @@ export const compileArray = ({
 export const compileNumber = (
   parserDefinition: NumberParserDefinition
 ): Parser<number> => {
-  return (tokens, currentTokenIndex = 0, context = {}) => {
+  return (tokens, currentTokenIndex , context) => {
     const nextToken = tokens[currentTokenIndex];
     const value = Number(nextToken);
     if (Number.isNaN(value)) {
@@ -90,7 +90,7 @@ export const compileNumber = (
 export const compileString = (
   parserDefinition: StringParserDefinition
 ): Parser<string> => {
-  return (tokens, currentTokenIndex = 0, context = {}) => {
+  return (tokens, currentTokenIndex , context) => {
     return {
       value: tokens[currentTokenIndex],
       currentTokenIndex: currentTokenIndex + 1,
@@ -128,8 +128,8 @@ export type StringParserDefinition = {
 
 type Parser<T> = (
   tokens: string[],
-  currentTokenIndex?: number,
-  context?: Context
+  currentTokenIndex: number,
+  context: Context
 ) => ParserResult<T>;
 
 type Context = { [key: string]: unknown };
@@ -137,5 +137,5 @@ type Context = { [key: string]: unknown };
 type ParserResult<T> = {
   value: T;
   currentTokenIndex: number;
-  context?: Context;
+  context: Context;
 };

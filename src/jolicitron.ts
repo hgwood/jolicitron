@@ -6,6 +6,6 @@ export default (parserDefinition: ShortParserDefinition, input: string) => {
   const normalized = normalize(parserDefinition);
   const parser = compile(normalized);
   const tokens = tokenize(input);
-  const { value } = parser(tokens);
+  const { value } = parser(tokens, 0, {});
   return value;
 };
