@@ -65,7 +65,7 @@ export const compileNumber = (
   return (tokens, context) => {
     const next = tokens.next();
     if (next.done) {
-      throw new RangeError(`expected string but found no more tokens`);
+      throw new RangeError(`expected number but found no more tokens`);
     }
     const value = Number(next.value);
     if (Number.isNaN(value)) {
