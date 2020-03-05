@@ -22,3 +22,25 @@ test("refering to unknown variable raises an error", t => {
   }, RangeError);
   t.end();
 });
+
+test("expecting for numbers than there is raises an error", t => {
+  const parser = compile({
+    type: "object",
+    properties: [{ prop1: { type: "number" } }, { prop2: { type: "number" } }]
+  });
+  t.throws(() => {
+    parser(["1"][Symbol.iterator](), {});
+  }, RangeError);
+  t.end();
+});
+
+test("expecting for strings than there is raises an error", t => {
+  const parser = compile({
+    type: "object",
+    properties: [{ prop1: { type: "string" } }, { prop2: { type: "string" } }]
+  });
+  t.throws(() => {
+    parser(["1"][Symbol.iterator](), {});
+  }, RangeError);
+  t.end();
+});
