@@ -40,10 +40,10 @@ export const compileArray = ({
 }: ArrayParserDefinition): Parser<unknown[]> => {
   const itemParser = compile(items);
   return (tokens, context) => {
-    const lengthValue = Number(context?.[length]);
+    const lengthValue = Number(context[length]);
     if (!Number.isSafeInteger(lengthValue) || lengthValue < 0) {
       throw new RangeError(
-        `expected '${length}' to be a safe positive integer but found '${context?.[length]}'`
+        `expected '${length}' to be a safe positive integer but found '${context[length]}'`
       );
     }
     const result = {
