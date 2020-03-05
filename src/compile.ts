@@ -43,7 +43,7 @@ export const compileArray = ({
     const lengthValue = Number(context[length]);
     if (!Number.isSafeInteger(lengthValue) || lengthValue < 0) {
       throw new RangeError(
-        `expected '${length}' to be a safe positive integer but found '${context[length]}'`
+        `expected '${length}' to be a safe positive integer but found '${context[length]}' which evaluated to '${lengthValue}'`
       );
     }
     const result = {
