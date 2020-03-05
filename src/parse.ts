@@ -3,25 +3,25 @@ export const parseObject = (
     [key: string]: Parser<unknown>;
   }[]
 ): Parser<{ [key: string]: unknown }> => (tokens, parentContext) => {
-  const value: { [key: string]: unknown } = {};
+  const result: { [key: string]: unknown } = {};
   const context: OpenContext = {
     variables: Object.create(parentContext.variables)
   };
-  for (const property of propertyParsers) {
-    const [[propertyName, propertyParser]] = Object.entries(property);
-    const propertyParserResult = propertyParser(tokens, context);
-    value[propertyName] = propertyParserResult.value;
-    if (typeof propertyParserResult.value === "number") {
+  for (const propertyParser of propertyParsers) {
+    const [[name, parser]] = Object.entries(propertyParser);
+    const { value } = parser(tokens, context);
+    result[name] = value;
+    if (typeof value === "number") {
       // Looks like it could be a length for a future array, lets remember it
-      if (context.variables.hasOwnProperty(propertyName)) {
-        console.warn(`WARNING: overriding variable '${propertyName}'`);
-      } else if (parentContext.variables[propertyName]) {
-        console.warn(`WARNING: shadowing variable '${propertyName}'`);
+      if (context.variables.hasOwnProperty(name)) {
+        console.warn(`WARNING: overriding variable '${name}'`);
+      } else if (parentContext.variables[name]) {
+        console.warn(`WARNING: shadowing variable '${name}'`);
       }
-      context.variables[propertyName] = propertyParserResult.value;
+      context.variables[name] = value;
     }
   }
-  return { value, context };
+  return { value: result, context };
 };
 
 export const parseArray = <T>(
@@ -34,12 +34,12 @@ export const parseArray = <T>(
       `expected '${length}' to be a safe positive integer but found '${context.variables[length]}' which evaluated to '${lengthValue}'`
     );
   }
-  const value = [];
+  const result = [];
   for (let i = 0; i < lengthValue; i++) {
-    const itemParserResult = itemParser(tokens, context);
-    value.push(itemParserResult.value);
+    const { value } = itemParser(tokens, context);
+    result.push(value);
   }
-  return { value, context };
+  return { value: result, context };
 };
 
 export const parseNumber = (): Parser<number> => (tokens, context) => {
