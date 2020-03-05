@@ -15,22 +15,32 @@ export const compile = (
 
 export const compileObject = ({
   properties
-}: ObjectParserDefinition): Parser<unknown> => {
+}: ObjectParserDefinition): Parser<{ [key: string]: unknown }> => {
   const propertyParsers = properties.map(propertyParserDefinition => {
     const [[propertyName, parserDefinition]] = Object.entries(
       propertyParserDefinition
     );
     return [propertyName, compile(parserDefinition)] as const;
   });
-  return (tokens, context) => {
-    const result = { value: {}, context };
+  return (tokens, parentContext) => {
+    const value: { [key: string]: unknown } = {};
+    const context: OpenContext = {
+      variables: Object.create(parentContext.variables)
+    };
     for (const [propertyName, propertyParser] of propertyParsers) {
-      const propertyParserResult = propertyParser(tokens, result.context);
-      // @ts-ignore
-      result.value[propertyName] = propertyParserResult.value;
-      result.context[propertyName] = propertyParserResult.value;
+      const propertyParserResult = propertyParser(tokens, context);
+      value[propertyName] = propertyParserResult.value;
+      if (typeof propertyParserResult.value === "number") {
+        // Looks like it could be a length for a future array, lets remember it
+        if (context.variables.hasOwnProperty(propertyName)) {
+          console.warn(`WARNING: overriding variable '${propertyName}'`);
+        } else if (parentContext.variables[propertyName]) {
+          console.warn(`WARNING: shadowing variable '${propertyName}'`);
+        }
+        context.variables[propertyName] = propertyParserResult.value;
+      }
     }
-    return result;
+    return { value, context };
   };
 };
 
@@ -40,22 +50,18 @@ export const compileArray = ({
 }: ArrayParserDefinition): Parser<unknown[]> => {
   const itemParser = compile(items);
   return (tokens, context) => {
-    const lengthValue = Number(context[length]);
+    const lengthValue = Number(context.variables[length]);
     if (!Number.isSafeInteger(lengthValue) || lengthValue < 0) {
       throw new RangeError(
-        `expected '${length}' to be a safe positive integer but found '${context[length]}' which evaluated to '${lengthValue}'`
+        `expected '${length}' to be a safe positive integer but found '${context.variables[length]}' which evaluated to '${lengthValue}'`
       );
     }
-    const result = {
-      value: [],
-      context
-    } as ParserResult<unknown[]>;
+    const value = [];
     for (let i = 0; i < lengthValue; i++) {
       const itemParserResult = itemParser(tokens, context);
-      result.context = itemParserResult.context;
-      result.value.push(itemParserResult.value);
+      value.push(itemParserResult.value);
     }
-    return result;
+    return { value, context };
   };
 };
 
@@ -122,14 +128,18 @@ export type StringParserDefinition = {
   type: "string";
 };
 
-type Parser<T> = (
+export type Parser<T> = (
   tokens: Iterator<string>,
-  context: Context
+  context: ClosedContext
 ) => ParserResult<T>;
 
-type Context = { [key: string]: unknown };
+export type OpenContext = { readonly variables: { [key: string]: unknown } };
 
-type ParserResult<T> = {
+export type ClosedContext = OpenContext & {
+  variables: Readonly<OpenContext["variables"]>;
+};
+
+export type ParserResult<T> = {
   value: T;
-  context: Context;
+  context: ClosedContext;
 };
