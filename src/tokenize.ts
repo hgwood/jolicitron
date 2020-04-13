@@ -1,3 +1,5 @@
-export const tokenize = (input: string) => {
-  return input.split(/\s+/).filter(Boolean);
-};
+export function* tokenize(input: string) {
+  for (const [token] of input.matchAll(/\S+/g)) {
+    yield token;
+  }
+}
