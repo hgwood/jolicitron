@@ -2,8 +2,8 @@ import {
   parseString,
   Parser,
   parseNumber,
-  parseArray,
-  parseObject
+  makeArrayParser,
+  makeObjectParser
 } from "./parse";
 
 export const compile = (
@@ -15,13 +15,13 @@ export const compile = (
     case "array":
       return compileArray(parserDefinition);
     case "number":
-      return compileNumber(parserDefinition);
+      return parseNumber;
     case "string":
-      return compileString(parserDefinition);
+      return parseString;
   }
 };
 
-export const compileObject = ({
+const compileObject = ({
   properties
 }: ObjectParserDefinition): Parser<{ [key: string]: unknown }> => {
   const parsers: {
@@ -30,26 +30,14 @@ export const compileObject = ({
     const [[name, parserDefinition]] = Object.entries(property);
     return { [name]: compile(parserDefinition) };
   });
-  return parseObject(parsers);
+  return makeObjectParser(parsers);
 };
 
-export const compileArray = ({
+const compileArray = ({
   length,
   items
 }: ArrayParserDefinition): Parser<unknown[]> => {
-  return parseArray(length, compile(items));
-};
-
-export const compileNumber = (
-  parserDefinition: NumberParserDefinition
-): Parser<number> => {
-  return parseNumber();
-};
-
-export const compileString = (
-  parserDefinition: StringParserDefinition
-): Parser<string> => {
-  return parseString();
+  return makeArrayParser(length, compile(items));
 };
 
 export type ParserDefinition =

@@ -1,48 +1,52 @@
-export const parseObject = (
+export function makeObjectParser(
   propertyParsers: {
     [key: string]: Parser<unknown>;
   }[]
-): Parser<{ [key: string]: unknown }> => (tokens, parentContext) => {
-  const result: { [key: string]: unknown } = {};
-  const context: OpenContext = {
-    variables: Object.create(parentContext.variables)
-  };
-  for (const propertyParser of propertyParsers) {
-    const [[name, parser]] = Object.entries(propertyParser);
-    const { value } = parser(tokens, context);
-    result[name] = value;
-    if (typeof value === "number") {
-      // Looks like it could be a length for a future array, lets remember it
-      if (context.variables.hasOwnProperty(name)) {
-        // console.warn(`WARNING: overriding variable '${name}'`);
-      } else if (parentContext.variables[name]) {
-        // console.warn(`WARNING: shadowing variable '${name}'`);
+): Parser<{ [key: string]: unknown }> {
+  return function parseObject(tokens, parentContext) {
+    const result: { [key: string]: unknown } = {};
+    const context: OpenContext = {
+      variables: Object.create(parentContext.variables)
+    };
+    for (const propertyParser of propertyParsers) {
+      const [[name, parser]] = Object.entries(propertyParser);
+      const { value } = parser(tokens, context);
+      result[name] = value;
+      if (typeof value === "number") {
+        // Looks like it could be a length for a future array, lets remember it
+        if (context.variables.hasOwnProperty(name)) {
+          // console.warn(`WARNING: overriding variable '${name}'`);
+        } else if (parentContext.variables[name]) {
+          // console.warn(`WARNING: shadowing variable '${name}'`);
+        }
+        context.variables[name] = value;
       }
-      context.variables[name] = value;
     }
-  }
-  return { value: result, context };
-};
+    return { value: result, context };
+  };
+}
 
-export const parseArray = <T>(
+export function makeArrayParser<T>(
   length: string,
   itemParser: Parser<T>
-): Parser<T[]> => (tokens, context) => {
-  const lengthValue = Number(context.variables[length]);
-  if (!Number.isSafeInteger(lengthValue) || lengthValue < 0) {
-    throw new RangeError(
-      `expected '${length}' to be a safe positive integer but found '${context.variables[length]}' which evaluated to '${lengthValue}'`
-    );
-  }
-  const result = [];
-  for (let i = 0; i < lengthValue; i++) {
-    const { value } = itemParser(tokens, context);
-    result.push(value);
-  }
-  return { value: result, context };
-};
+): Parser<T[]> {
+  return function parseArray(tokens, context) {
+    const lengthValue = Number(context.variables[length]);
+    if (!Number.isSafeInteger(lengthValue) || lengthValue < 0) {
+      throw new RangeError(
+        `expected '${length}' to be a safe positive integer but found '${context.variables[length]}' which evaluated to '${lengthValue}'`
+      );
+    }
+    const result = [];
+    for (let i = 0; i < lengthValue; i++) {
+      const { value } = itemParser(tokens, context);
+      result.push(value);
+    }
+    return { value: result, context };
+  };
+}
 
-export const parseNumber = (): Parser<number> => (tokens, context) => {
+export const parseNumber: Parser<number> = (tokens, context) => {
   const next = tokens.next();
   if (next.done) {
     throw new RangeError(`expected number but found no more tokens`);
@@ -59,7 +63,7 @@ export const parseNumber = (): Parser<number> => (tokens, context) => {
   };
 };
 
-export const parseString = (): Parser<string> => (tokens, context) => {
+export const parseString: Parser<string> = (tokens, context) => {
   const next = tokens.next();
   if (next.done) {
     throw new RangeError(`expected string but found no more tokens`);
