@@ -16,10 +16,10 @@ test("no type implies number", t => {
 });
 
 test("array implies object", t => {
-  const actual = normalize([{ myProperty: { type: "number" } }]);
+  const actual = normalize([{ name: "myProperty", value: { type: "number" } }]);
   const expected = {
     type: "object",
-    properties: [{ myProperty: { type: "number" } }]
+    properties: [{ name: "myProperty", value: { type: "number" } }]
   };
   t.deepEqual(actual, expected);
   t.end();
@@ -29,7 +29,7 @@ test("string for a property implies number property", t => {
   const actual = normalize({ type: "object", properties: ["myProperty"] });
   const expected = {
     type: "object",
-    properties: [{ myProperty: { type: "number" } }]
+    properties: [{ name: "myProperty", value: { type: "number" } }]
   };
   t.deepEqual(actual, expected);
   t.end();
@@ -44,7 +44,8 @@ test("3-tuple for a property implies array property", t => {
     type: "object",
     properties: [
       {
-        myProperty: {
+        name: "myProperty",
+        value: {
           type: "array",
           length: "myLength",
           items: { type: "string" }
@@ -65,7 +66,8 @@ test("2-tuple for a property implies number array property", t => {
     type: "object",
     properties: [
       {
-        myProperty: {
+        name: "myProperty",
+        value: {
           type: "array",
           length: "myLength",
           items: { type: "number" }

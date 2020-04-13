@@ -1,6 +1,7 @@
 export function makeObjectParser(
   propertyParsers: {
-    [key: string]: Parser<unknown>;
+    name: string;
+    value: Parser<unknown>;
   }[]
 ): Parser<{ [key: string]: unknown }> {
   return function parseObject(tokens, parentContext) {
@@ -8,8 +9,7 @@ export function makeObjectParser(
     const context: OpenContext = {
       variables: Object.create(parentContext.variables)
     };
-    for (const propertyParser of propertyParsers) {
-      const [[name, parser]] = Object.entries(propertyParser);
+    for (const { name, value: parser } of propertyParsers) {
       const { value } = parser(tokens, context);
       result[name] = value;
       if (typeof value === "number") {

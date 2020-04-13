@@ -24,11 +24,8 @@ export const compile = (
 const compileObject = ({
   properties
 }: ObjectParserDefinition): Parser<{ [key: string]: unknown }> => {
-  const parsers: {
-    [key: string]: Parser<unknown>;
-  }[] = properties.map(property => {
-    const [[name, parserDefinition]] = Object.entries(property);
-    return { [name]: compile(parserDefinition) };
+  const parsers = properties.map(({ name, value }) => {
+    return { name, value: compile(value) };
   });
   return makeObjectParser(parsers);
 };
@@ -51,7 +48,10 @@ export type ObjectParserDefinition = {
   properties: PropertyParserDefinition[];
 };
 
-export type PropertyParserDefinition = { [key: string]: ParserDefinition };
+export type PropertyParserDefinition = {
+  name: string;
+  value: ParserDefinition;
+};
 
 export type ArrayParserDefinition = {
   type: "array";
