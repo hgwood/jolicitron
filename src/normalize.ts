@@ -46,7 +46,7 @@ const normalizeProperty = (
   shortPropertyParserDefinition: ShortPropertyParserDefinition
 ): PropertyParserDefinition => {
   if (typeof shortPropertyParserDefinition === "string") {
-    return { [shortPropertyParserDefinition]: normalize({}) };
+    return { name: shortPropertyParserDefinition, value: normalize({}) };
   } else if (Array.isArray(shortPropertyParserDefinition)) {
     const [
       propertyName,
@@ -54,17 +54,16 @@ const normalizeProperty = (
       itemParserDefinition
     ] = shortPropertyParserDefinition;
     return {
-      [propertyName]: {
+      name: propertyName,
+      value: {
         type: "array",
         length,
         items: normalize(itemParserDefinition || {})
       }
     };
   } else {
-    const [[propertyName, parserDefinition]] = Object.entries(
-      shortPropertyParserDefinition
-    );
-    return { [propertyName]: normalize(parserDefinition) };
+    const { name, value } = shortPropertyParserDefinition;
+    return { name, value: normalize(value) };
   }
 };
 
@@ -109,7 +108,7 @@ export type ShortObjectParserDefinition =
   | ShortPropertyParserDefinition[];
 
 export type ShortPropertyParserDefinition =
-  | { [key: string]: ShortParserDefinition }
+  | { name: string; value: ShortParserDefinition }
   | string
   | [string, string]
   | [string, string, ShortParserDefinition];

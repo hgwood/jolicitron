@@ -26,7 +26,10 @@ test("refering to unknown variable raises an error", t => {
 test("expecting for numbers than there is raises an error", t => {
   const parser = compile({
     type: "object",
-    properties: [{ prop1: { type: "number" } }, { prop2: { type: "number" } }]
+    properties: [
+      { name: "prop1", value: { type: "number" } },
+      { name: "prop2", value: { type: "number" } }
+    ]
   });
   t.throws(() => {
     parser(["1"][Symbol.iterator](), { variables: {} });
@@ -37,7 +40,10 @@ test("expecting for numbers than there is raises an error", t => {
 test("expecting for strings than there is raises an error", t => {
   const parser = compile({
     type: "object",
-    properties: [{ prop1: { type: "string" } }, { prop2: { type: "string" } }]
+    properties: [
+      { name: "prop1", value: { type: "string" } },
+      { name: "prop2", value: { type: "string" } }
+    ]
   });
   t.throws(() => {
     parser(["1"][Symbol.iterator](), { variables: {} });
