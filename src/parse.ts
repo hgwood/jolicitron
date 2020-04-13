@@ -14,9 +14,9 @@ export const parseObject = (
     if (typeof value === "number") {
       // Looks like it could be a length for a future array, lets remember it
       if (context.variables.hasOwnProperty(name)) {
-        console.warn(`WARNING: overriding variable '${name}'`);
+        // console.warn(`WARNING: overriding variable '${name}'`);
       } else if (parentContext.variables[name]) {
-        console.warn(`WARNING: shadowing variable '${name}'`);
+        // console.warn(`WARNING: shadowing variable '${name}'`);
       }
       context.variables[name] = value;
     }
