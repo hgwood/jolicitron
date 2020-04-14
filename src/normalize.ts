@@ -11,9 +11,9 @@ export const normalize = (schema: Schema): NormalSchema => {
   if (typeof schema === "string") {
     return { type: schema };
   } else if (Array.isArray(schema) || schema.type === "object") {
-    return normalizeObject(schema);
+    return normalizeObjectSchema(schema);
   } else if ("length" in schema) {
-    return normalizeArray(schema);
+    return normalizeArraySchema(schema);
   } else if (!schema.type) {
     return { type: "number" };
   } else {
@@ -21,21 +21,23 @@ export const normalize = (schema: Schema): NormalSchema => {
   }
 };
 
-const normalizeObject = (schema: ObjectSchema): NormalObjectSchema => {
+const normalizeObjectSchema = (schema: ObjectSchema): NormalObjectSchema => {
   if (Array.isArray(schema)) {
-    return normalizeObject({
+    return normalizeObjectSchema({
       type: "object",
       properties: schema
     });
   } else {
     return {
       type: "object",
-      properties: schema.properties.map(normalizeProperty)
+      properties: schema.properties.map(normalizePropertySchema)
     };
   }
 };
 
-const normalizeProperty = (schema: PropertySchema): NormalPropertySchema => {
+const normalizePropertySchema = (
+  schema: PropertySchema
+): NormalPropertySchema => {
   if (typeof schema === "string") {
     return { name: schema, value: normalize({}) };
   } else if (Array.isArray(schema)) {
@@ -54,9 +56,9 @@ const normalizeProperty = (schema: PropertySchema): NormalPropertySchema => {
   }
 };
 
-const normalizeArray = (schema: ArraySchema): NormalArraySchema => {
+const normalizeArraySchema = (schema: ArraySchema): NormalArraySchema => {
   if (schema.type !== "array") {
-    return normalizeArray({
+    return normalizeArraySchema({
       type: "array",
       length: schema.length,
       items: schema.items
