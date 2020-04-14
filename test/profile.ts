@@ -10,10 +10,10 @@ const input = fs.readFileSync(inputFile).toString();
 
 console.profile("full");
 console.profile("normalize");
-const normalized = normalize(schema);
+const normalSchema = normalize(schema);
 console.profileEnd("normalize");
 console.profile("compile");
-const parser = compile(normalized);
+const parser = compile(normalSchema);
 console.profileEnd("compile");
 console.profile("tokenize");
 const tokens = tokenize(input);

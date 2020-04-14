@@ -1,122 +1,107 @@
 import {
-  ParserDefinition,
-  ObjectParserDefinition,
-  PropertyParserDefinition,
-  ArrayParserDefinition,
-  StringParserDefinition,
-  NumberParserDefinition
+  NormalSchema,
+  NormalObjectSchema,
+  NormalPropertySchema,
+  NormalArraySchema,
+  NormalStringSchema,
+  NormalNumberSchema
 } from "./compile";
 
-export const normalize = (
-  shortParserDefinition: ShortParserDefinition
-): ParserDefinition => {
-  if (typeof shortParserDefinition === "string") {
-    return { type: shortParserDefinition };
-  } else if (
-    Array.isArray(shortParserDefinition) ||
-    shortParserDefinition.type === "object"
-  ) {
-    return normalizeObject(shortParserDefinition);
-  } else if ("length" in shortParserDefinition) {
-    return normalizeArray(shortParserDefinition);
-  } else if (!shortParserDefinition.type) {
+export const normalize = (schema: Schema): NormalSchema => {
+  if (typeof schema === "string") {
+    return { type: schema };
+  } else if (Array.isArray(schema) || schema.type === "object") {
+    return normalizeObjectSchema(schema);
+  } else if ("length" in schema) {
+    return normalizeArraySchema(schema);
+  } else if (!schema.type) {
     return { type: "number" };
   } else {
-    return { type: shortParserDefinition.type };
+    return { type: schema.type };
   }
 };
 
-const normalizeObject = (
-  shortObjectParserDefinition: ShortObjectParserDefinition
-): ObjectParserDefinition => {
-  if (Array.isArray(shortObjectParserDefinition)) {
-    return normalizeObject({
+const normalizeObjectSchema = (schema: ObjectSchema): NormalObjectSchema => {
+  if (Array.isArray(schema)) {
+    return normalizeObjectSchema({
       type: "object",
-      properties: shortObjectParserDefinition
+      properties: schema
     });
   } else {
     return {
       type: "object",
-      properties: shortObjectParserDefinition.properties.map(normalizeProperty)
+      properties: schema.properties.map(normalizePropertySchema)
     };
   }
 };
 
-const normalizeProperty = (
-  shortPropertyParserDefinition: ShortPropertyParserDefinition
-): PropertyParserDefinition => {
-  if (typeof shortPropertyParserDefinition === "string") {
-    return { name: shortPropertyParserDefinition, value: normalize({}) };
-  } else if (Array.isArray(shortPropertyParserDefinition)) {
-    const [
-      propertyName,
-      length,
-      itemParserDefinition
-    ] = shortPropertyParserDefinition;
+const normalizePropertySchema = (
+  schema: PropertySchema
+): NormalPropertySchema => {
+  if (typeof schema === "string") {
+    return { name: schema, value: normalize({}) };
+  } else if (Array.isArray(schema)) {
+    const [propertyName, length, itemSchema] = schema;
     return {
       name: propertyName,
       value: {
         type: "array",
         length,
-        items: normalize(itemParserDefinition || {})
+        items: normalize(itemSchema || {})
       }
     };
   } else {
-    const { name, value } = shortPropertyParserDefinition;
+    const { name, value } = schema;
     return { name, value: normalize(value) };
   }
 };
 
-const normalizeArray = (
-  shortArrayParserDefinition: ShortArrayParserDefinition
-): ArrayParserDefinition => {
-  if (shortArrayParserDefinition.type !== "array") {
-    return normalizeArray({
+const normalizeArraySchema = (schema: ArraySchema): NormalArraySchema => {
+  if (schema.type !== "array") {
+    return normalizeArraySchema({
       type: "array",
-      length: shortArrayParserDefinition.length,
-      items: shortArrayParserDefinition.items
-        ? normalize(shortArrayParserDefinition.items)
-        : // TypeScript seems unable to select the subset of ShortParserDefinition
-          // that is correct here. It selects ShortArrayParserDefinition instead of
-          // ShortNumberParserDefiniton | StringParserDefinition. Hence the cast.
-          normalize({ type: shortArrayParserDefinition.type } as
-            | ShortNumberParserDefinition
-            | StringParserDefinition)
+      length: schema.length,
+      items: schema.items
+        ? normalize(schema.items)
+        : // TypeScript seems unable to select the subset of Schema
+          // that is correct here. It selects ArraySchema instead of
+          // NumberSchema | NormalStringSchema. Hence the cast.
+          normalize({ type: schema.type } as NumberSchema | NormalStringSchema)
     });
   } else {
     return {
       type: "array",
-      length: shortArrayParserDefinition.length,
-      items: normalize(shortArrayParserDefinition.items || {})
+      length: schema.length,
+      items: normalize(schema.items || {})
     };
   }
 };
 
-export type ShortParserDefinition =
-  | ShortObjectParserDefinition
-  | ShortArrayParserDefinition
-  | ShortNumberParserDefinition
-  | StringParserDefinition
+export type Schema =
+  | ObjectSchema
+  | ArraySchema
+  | NumberSchema
+  | NormalStringSchema
   | "number"
   | "string";
 
-export type ShortObjectParserDefinition =
+export type ObjectSchema =
   | {
       type: "object";
-      properties: ShortPropertyParserDefinition[];
+      properties: PropertySchema[];
     }
-  | ShortPropertyParserDefinition[];
+  | PropertySchema[];
 
-export type ShortPropertyParserDefinition =
-  | { name: string; value: ShortParserDefinition }
+export type PropertySchema =
+  | { name: string; value: Schema }
   | string
   | [string, string]
-  | [string, string, ShortParserDefinition];
+  | [string, string, Schema];
 
-export type ShortArrayParserDefinition = {
-  length: ArrayParserDefinition["length"];
+export type ArraySchema = {
+  length: NormalArraySchema["length"];
   type?: "number" | "string" | "array";
-  items?: ShortParserDefinition;
+  items?: Schema;
 };
 
-export type ShortNumberParserDefinition = Partial<NumberParserDefinition>;
+export type NumberSchema = Partial<NormalNumberSchema>;

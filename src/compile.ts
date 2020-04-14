@@ -6,14 +6,12 @@ import {
   makeObjectParser
 } from "./parse";
 
-export const compile = (
-  parserDefinition: ParserDefinition
-): Parser<unknown> => {
-  switch (parserDefinition.type) {
+export const compile = (schema: NormalSchema): Parser<unknown> => {
+  switch (schema.type) {
     case "object":
-      return compileObject(parserDefinition);
+      return compileObjectSchema(schema);
     case "array":
-      return compileArray(parserDefinition);
+      return compileArraySchema(schema);
     case "number":
       return parseNumber;
     case "string":
@@ -21,48 +19,48 @@ export const compile = (
   }
 };
 
-const compileObject = ({
+const compileObjectSchema = ({
   properties
-}: ObjectParserDefinition): Parser<{ [key: string]: unknown }> => {
+}: NormalObjectSchema): Parser<{ [key: string]: unknown }> => {
   const parsers = properties.map(({ name, value }) => {
     return { name, value: compile(value) };
   });
   return makeObjectParser(parsers);
 };
 
-const compileArray = ({
+const compileArraySchema = ({
   length,
   items
-}: ArrayParserDefinition): Parser<unknown[]> => {
+}: NormalArraySchema): Parser<unknown[]> => {
   return makeArrayParser(length, compile(items));
 };
 
-export type ParserDefinition =
-  | ObjectParserDefinition
-  | ArrayParserDefinition
-  | NumberParserDefinition
-  | StringParserDefinition;
+export type NormalSchema =
+  | NormalObjectSchema
+  | NormalArraySchema
+  | NormalNumberSchema
+  | NormalStringSchema;
 
-export type ObjectParserDefinition = {
+export type NormalObjectSchema = {
   type: "object";
-  properties: PropertyParserDefinition[];
+  properties: NormalPropertySchema[];
 };
 
-export type PropertyParserDefinition = {
+export type NormalPropertySchema = {
   name: string;
-  value: ParserDefinition;
+  value: NormalSchema;
 };
 
-export type ArrayParserDefinition = {
+export type NormalArraySchema = {
   type: "array";
   length: string;
-  items: ParserDefinition;
+  items: NormalSchema;
 };
 
-export type NumberParserDefinition = {
+export type NormalNumberSchema = {
   type: "number";
 };
 
-export type StringParserDefinition = {
+export type NormalStringSchema = {
   type: "string";
 };
