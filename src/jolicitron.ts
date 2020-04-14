@@ -1,8 +1,8 @@
 import { compile } from "./compile";
-import { ShortSchema, normalize } from "./normalize";
+import { Schema, normalize } from "./normalize";
 import { tokenize } from "./tokenize";
 
-export default (schema: ShortSchema, input: string) => {
+export default (schema: Schema, input: string) => {
   const normalized = normalize(schema);
   const parser = compile(normalized);
   const tokens = tokenize(input);

@@ -1,13 +1,13 @@
 import {
-  Schema,
-  ObjectSchema,
-  PropertySchema,
-  ArraySchema,
-  StringSchema,
-  NumberSchema
+  NormalSchema,
+  NormalObjectSchema,
+  NormalPropertySchema,
+  NormalArraySchema,
+  NormalStringSchema,
+  NormalNumberSchema
 } from "./compile";
 
-export const normalize = (shortSchema: ShortSchema): Schema => {
+export const normalize = (shortSchema: Schema): NormalSchema => {
   if (typeof shortSchema === "string") {
     return { type: shortSchema };
   } else if (Array.isArray(shortSchema) || shortSchema.type === "object") {
@@ -22,8 +22,8 @@ export const normalize = (shortSchema: ShortSchema): Schema => {
 };
 
 const normalizeObject = (
-  shortObjectSchema: ShortObjectSchema
-): ObjectSchema => {
+  shortObjectSchema: ObjectSchema
+): NormalObjectSchema => {
   if (Array.isArray(shortObjectSchema)) {
     return normalizeObject({
       type: "object",
@@ -38,8 +38,8 @@ const normalizeObject = (
 };
 
 const normalizeProperty = (
-  shortPropertySchema: ShortPropertySchema
-): PropertySchema => {
+  shortPropertySchema: PropertySchema
+): NormalPropertySchema => {
   if (typeof shortPropertySchema === "string") {
     return { name: shortPropertySchema, value: normalize({}) };
   } else if (Array.isArray(shortPropertySchema)) {
@@ -58,7 +58,9 @@ const normalizeProperty = (
   }
 };
 
-const normalizeArray = (shortArraySchema: ShortArraySchema): ArraySchema => {
+const normalizeArray = (
+  shortArraySchema: ArraySchema
+): NormalArraySchema => {
   if (shortArraySchema.type !== "array") {
     return normalizeArray({
       type: "array",
@@ -69,8 +71,8 @@ const normalizeArray = (shortArraySchema: ShortArraySchema): ArraySchema => {
           // that is correct here. It selects ShortArraySchema instead of
           // ShortNumberParserDefiniton | StringSchema. Hence the cast.
           normalize({ type: shortArraySchema.type } as
-            | ShortNumberSchema
-            | StringSchema)
+            | NumberSchema
+            | NormalStringSchema)
     });
   } else {
     return {
@@ -81,31 +83,31 @@ const normalizeArray = (shortArraySchema: ShortArraySchema): ArraySchema => {
   }
 };
 
-export type ShortSchema =
-  | ShortObjectSchema
-  | ShortArraySchema
-  | ShortNumberSchema
-  | StringSchema
+export type Schema =
+  | ObjectSchema
+  | ArraySchema
+  | NumberSchema
+  | NormalStringSchema
   | "number"
   | "string";
 
-export type ShortObjectSchema =
+export type ObjectSchema =
   | {
       type: "object";
-      properties: ShortPropertySchema[];
+      properties: PropertySchema[];
     }
-  | ShortPropertySchema[];
+  | PropertySchema[];
 
-export type ShortPropertySchema =
-  | { name: string; value: ShortSchema }
+export type PropertySchema =
+  | { name: string; value: Schema }
   | string
   | [string, string]
-  | [string, string, ShortSchema];
+  | [string, string, Schema];
 
-export type ShortArraySchema = {
-  length: ArraySchema["length"];
+export type ArraySchema = {
+  length: NormalArraySchema["length"];
   type?: "number" | "string" | "array";
-  items?: ShortSchema;
+  items?: Schema;
 };
 
-export type ShortNumberSchema = Partial<NumberSchema>;
+export type NumberSchema = Partial<NormalNumberSchema>;

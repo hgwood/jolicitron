@@ -6,7 +6,7 @@ import {
   makeObjectParser
 } from "./parse";
 
-export const compile = (schema: Schema): Parser<unknown> => {
+export const compile = (schema: NormalSchema): Parser<unknown> => {
   switch (schema.type) {
     case "object":
       return compileObjectSchema(schema);
@@ -21,7 +21,7 @@ export const compile = (schema: Schema): Parser<unknown> => {
 
 const compileObjectSchema = ({
   properties
-}: ObjectSchema): Parser<{ [key: string]: unknown }> => {
+}: NormalObjectSchema): Parser<{ [key: string]: unknown }> => {
   const parsers = properties.map(({ name, value }) => {
     return { name, value: compile(value) };
   });
@@ -31,32 +31,36 @@ const compileObjectSchema = ({
 const compileArraySchema = ({
   length,
   items
-}: ArraySchema): Parser<unknown[]> => {
+}: NormalArraySchema): Parser<unknown[]> => {
   return makeArrayParser(length, compile(items));
 };
 
-export type Schema = ObjectSchema | ArraySchema | NumberSchema | StringSchema;
+export type NormalSchema =
+  | NormalObjectSchema
+  | NormalArraySchema
+  | NormalNumberSchema
+  | NormalStringSchema;
 
-export type ObjectSchema = {
+export type NormalObjectSchema = {
   type: "object";
-  properties: PropertySchema[];
+  properties: NormalPropertySchema[];
 };
 
-export type PropertySchema = {
+export type NormalPropertySchema = {
   name: string;
-  value: Schema;
+  value: NormalSchema;
 };
 
-export type ArraySchema = {
+export type NormalArraySchema = {
   type: "array";
   length: string;
-  items: Schema;
+  items: NormalSchema;
 };
 
-export type NumberSchema = {
+export type NormalNumberSchema = {
   type: "number";
 };
 
-export type StringSchema = {
+export type NormalStringSchema = {
   type: "string";
 };
