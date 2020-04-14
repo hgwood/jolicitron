@@ -6,14 +6,12 @@ import {
   makeObjectParser
 } from "./parse";
 
-export const compile = (
-  parserDefinition: ParserDefinition
-): Parser<unknown> => {
-  switch (parserDefinition.type) {
+export const compile = (schema: Schema): Parser<unknown> => {
+  switch (schema.type) {
     case "object":
-      return compileObject(parserDefinition);
+      return compileObject(schema);
     case "array":
-      return compileArray(parserDefinition);
+      return compileArray(schema);
     case "number":
       return parseNumber;
     case "string":
@@ -23,46 +21,39 @@ export const compile = (
 
 const compileObject = ({
   properties
-}: ObjectParserDefinition): Parser<{ [key: string]: unknown }> => {
+}: ObjectSchema): Parser<{ [key: string]: unknown }> => {
   const parsers = properties.map(({ name, value }) => {
     return { name, value: compile(value) };
   });
   return makeObjectParser(parsers);
 };
 
-const compileArray = ({
-  length,
-  items
-}: ArrayParserDefinition): Parser<unknown[]> => {
+const compileArray = ({ length, items }: ArraySchema): Parser<unknown[]> => {
   return makeArrayParser(length, compile(items));
 };
 
-export type ParserDefinition =
-  | ObjectParserDefinition
-  | ArrayParserDefinition
-  | NumberParserDefinition
-  | StringParserDefinition;
+export type Schema = ObjectSchema | ArraySchema | NumberSchema | StringSchema;
 
-export type ObjectParserDefinition = {
+export type ObjectSchema = {
   type: "object";
-  properties: PropertyParserDefinition[];
+  properties: PropertySchema[];
 };
 
-export type PropertyParserDefinition = {
+export type PropertySchema = {
   name: string;
-  value: ParserDefinition;
+  value: Schema;
 };
 
-export type ArrayParserDefinition = {
+export type ArraySchema = {
   type: "array";
   length: string;
-  items: ParserDefinition;
+  items: Schema;
 };
 
-export type NumberParserDefinition = {
+export type NumberSchema = {
   type: "number";
 };
 
-export type StringParserDefinition = {
+export type StringSchema = {
   type: "string";
 };
