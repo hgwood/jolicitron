@@ -3,8 +3,8 @@ import { Schema, normalize } from "./normalize";
 import { tokenize } from "./tokenize";
 
 export default (schema: Schema, input: string) => {
-  const normalized = normalize(schema);
-  const parser = compile(normalized);
+  const normalSchema = normalize(schema);
+  const parser = compile(normalSchema);
   const tokens = tokenize(input);
   const result = parser(tokens, {});
   return result;
