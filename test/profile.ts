@@ -19,8 +19,8 @@ console.profile("tokenize");
 const tokens = tokenize(input);
 console.profileEnd("tokenize");
 console.profile("parse");
-const { value } = parser(tokens, { variables: {} });
+const result = parser(tokens, {});
 console.profileEnd("parse");
 console.profileEnd("full");
-// only to make sure there is no kind of 'unused code' elimination due to 'value' being unused
-console.log(typeof value);
+// only to make sure there is no kind of 'unused code' elimination due to 'result' being unused
+console.log(typeof result);
