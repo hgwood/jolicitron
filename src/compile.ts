@@ -9,9 +9,9 @@ import {
 export const compile = (schema: Schema): Parser<unknown> => {
   switch (schema.type) {
     case "object":
-      return compileObject(schema);
+      return compileObjectSchema(schema);
     case "array":
-      return compileArray(schema);
+      return compileArraySchema(schema);
     case "number":
       return parseNumber;
     case "string":
@@ -19,7 +19,7 @@ export const compile = (schema: Schema): Parser<unknown> => {
   }
 };
 
-const compileObject = ({
+const compileObjectSchema = ({
   properties
 }: ObjectSchema): Parser<{ [key: string]: unknown }> => {
   const parsers = properties.map(({ name, value }) => {
@@ -28,7 +28,10 @@ const compileObject = ({
   return makeObjectParser(parsers);
 };
 
-const compileArray = ({ length, items }: ArraySchema): Parser<unknown[]> => {
+const compileArraySchema = ({
+  length,
+  items
+}: ArraySchema): Parser<unknown[]> => {
   return makeArrayParser(length, compile(items));
 };
 
