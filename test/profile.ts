@@ -19,7 +19,7 @@ console.profile("tokenize");
 const tokens = tokenize(input);
 console.profileEnd("tokenize");
 console.profile("parse");
-const { value } = parser(tokens[Symbol.iterator](), { variables: {} });
+const { value } = parser(tokens, { variables: {} });
 console.profileEnd("parse");
 console.profileEnd("full");
 // only to make sure there is no kind of 'unused code' elimination due to 'value' being unused
