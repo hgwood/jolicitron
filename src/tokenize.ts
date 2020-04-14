@@ -1,15 +1,11 @@
-export function tokenize(input: string): Iterable<string> {
+export function tokenize(input: string): Iterator<string> {
+  const matches = input.matchAll(/\S+/g);
   return {
-    [Symbol.iterator]() {
-      const matches = input.matchAll(/\S+/g);
+    next() {
+      const { done, value } = matches.next();
       return {
-        next() {
-          const { done, value } = matches.next();
-          return {
-            done: done,
-            value: value[0]
-          };
-        }
+        done,
+        value: value[0]
       };
     }
   };
