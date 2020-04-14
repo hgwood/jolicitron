@@ -63,9 +63,9 @@ const normalizeArraySchema = (schema: ArraySchema): NormalArraySchema => {
       length: schema.length,
       items: schema.items
         ? normalize(schema.items)
-        : // TypeScript seems unable to select the subset of ShortSchema
-          // that is correct here. It selects ShortArraySchema instead of
-          // ShortNumberParserDefiniton | StringSchema. Hence the cast.
+        : // TypeScript seems unable to select the subset of Schema
+          // that is correct here. It selects ArraySchema instead of
+          // NumberSchema | NormalStringSchema. Hence the cast.
           normalize({ type: schema.type } as NumberSchema | NormalStringSchema)
     });
   } else {
