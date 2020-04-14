@@ -7,43 +7,39 @@ import {
   NormalNumberSchema
 } from "./compile";
 
-export const normalize = (shortSchema: Schema): NormalSchema => {
-  if (typeof shortSchema === "string") {
-    return { type: shortSchema };
-  } else if (Array.isArray(shortSchema) || shortSchema.type === "object") {
-    return normalizeObject(shortSchema);
-  } else if ("length" in shortSchema) {
-    return normalizeArray(shortSchema);
-  } else if (!shortSchema.type) {
+export const normalize = (schema: Schema): NormalSchema => {
+  if (typeof schema === "string") {
+    return { type: schema };
+  } else if (Array.isArray(schema) || schema.type === "object") {
+    return normalizeObject(schema);
+  } else if ("length" in schema) {
+    return normalizeArray(schema);
+  } else if (!schema.type) {
     return { type: "number" };
   } else {
-    return { type: shortSchema.type };
+    return { type: schema.type };
   }
 };
 
-const normalizeObject = (
-  shortObjectSchema: ObjectSchema
-): NormalObjectSchema => {
-  if (Array.isArray(shortObjectSchema)) {
+const normalizeObject = (schema: ObjectSchema): NormalObjectSchema => {
+  if (Array.isArray(schema)) {
     return normalizeObject({
       type: "object",
-      properties: shortObjectSchema
+      properties: schema
     });
   } else {
     return {
       type: "object",
-      properties: shortObjectSchema.properties.map(normalizeProperty)
+      properties: schema.properties.map(normalizeProperty)
     };
   }
 };
 
-const normalizeProperty = (
-  shortPropertySchema: PropertySchema
-): NormalPropertySchema => {
-  if (typeof shortPropertySchema === "string") {
-    return { name: shortPropertySchema, value: normalize({}) };
-  } else if (Array.isArray(shortPropertySchema)) {
-    const [propertyName, length, itemSchema] = shortPropertySchema;
+const normalizeProperty = (schema: PropertySchema): NormalPropertySchema => {
+  if (typeof schema === "string") {
+    return { name: schema, value: normalize({}) };
+  } else if (Array.isArray(schema)) {
+    const [propertyName, length, itemSchema] = schema;
     return {
       name: propertyName,
       value: {
@@ -53,32 +49,28 @@ const normalizeProperty = (
       }
     };
   } else {
-    const { name, value } = shortPropertySchema;
+    const { name, value } = schema;
     return { name, value: normalize(value) };
   }
 };
 
-const normalizeArray = (
-  shortArraySchema: ArraySchema
-): NormalArraySchema => {
-  if (shortArraySchema.type !== "array") {
+const normalizeArray = (schema: ArraySchema): NormalArraySchema => {
+  if (schema.type !== "array") {
     return normalizeArray({
       type: "array",
-      length: shortArraySchema.length,
-      items: shortArraySchema.items
-        ? normalize(shortArraySchema.items)
+      length: schema.length,
+      items: schema.items
+        ? normalize(schema.items)
         : // TypeScript seems unable to select the subset of ShortSchema
           // that is correct here. It selects ShortArraySchema instead of
           // ShortNumberParserDefiniton | StringSchema. Hence the cast.
-          normalize({ type: shortArraySchema.type } as
-            | NumberSchema
-            | NormalStringSchema)
+          normalize({ type: schema.type } as NumberSchema | NormalStringSchema)
     });
   } else {
     return {
       type: "array",
-      length: shortArraySchema.length,
-      items: normalize(shortArraySchema.items || {})
+      length: schema.length,
+      items: normalize(schema.items || {})
     };
   }
 };
