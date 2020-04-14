@@ -1,28 +1,28 @@
+import { ParentScope, createScope } from "./scope";
+
 export function makeObjectParser(
   propertyParsers: {
     name: string;
     value: Parser<unknown>;
   }[]
 ): Parser<{ [key: string]: unknown }> {
-  return function parseObject(tokens, parentContext) {
+  return function parseObject(tokens, variables) {
     const result: { [key: string]: unknown } = {};
-    const context: OpenContext = {
-      variables: Object.create(parentContext.variables)
-    };
+    const ownVariables = createScope(variables);
     for (const { name, value: parser } of propertyParsers) {
-      const { value } = parser(tokens, context);
+      const value = parser(tokens, ownVariables);
       result[name] = value;
       if (typeof value === "number") {
         // Looks like it could be a length for a future array, lets remember it
-        if (context.variables.hasOwnProperty(name)) {
+        if (ownVariables.hasOwnProperty(name)) {
           // console.warn(`WARNING: overriding variable '${name}'`);
-        } else if (parentContext.variables[name]) {
+        } else if (variables[name]) {
           // console.warn(`WARNING: shadowing variable '${name}'`);
         }
-        context.variables[name] = value;
+        ownVariables[name] = value;
       }
     }
-    return { value: result, context };
+    return result;
   };
 }
 
@@ -30,19 +30,19 @@ export function makeArrayParser<T>(
   length: string,
   itemParser: Parser<T>
 ): Parser<T[]> {
-  return function parseArray(tokens, context) {
-    const lengthValue = Number(context.variables[length]);
+  return function parseArray(tokens, variables) {
+    const lengthValue = Number(variables[length]);
     if (!Number.isSafeInteger(lengthValue) || lengthValue < 0) {
       throw new RangeError(
-        `expected '${length}' to be a safe positive integer but found '${context.variables[length]}' which evaluated to '${lengthValue}'`
+        `expected '${length}' to be a safe positive integer but found '${variables[length]}' which evaluated to '${lengthValue}'`
       );
     }
     const result = [];
     for (let i = 0; i < lengthValue; i++) {
-      const { value } = itemParser(tokens, context);
+      const value = itemParser(tokens, variables);
       result.push(value);
     }
-    return { value: result, context };
+    return result;
   };
 }
 
@@ -51,16 +51,13 @@ export const parseNumber: Parser<number> = (tokens, context) => {
   if (next.done) {
     throw new RangeError(`expected number but found no more tokens`);
   }
-  const value = Number(next.value);
-  if (Number.isNaN(value)) {
+  const result = Number(next.value);
+  if (Number.isNaN(result)) {
     throw new RangeError(
-      `expected number but found '${next.value}' which evaluated to '${value}'`
+      `expected number but found '${next.value}' which evaluated to '${result}'`
     );
   }
-  return {
-    value,
-    context
-  };
+  return result;
 };
 
 export const parseString: Parser<string> = (tokens, context) => {
@@ -68,24 +65,12 @@ export const parseString: Parser<string> = (tokens, context) => {
   if (next.done) {
     throw new RangeError(`expected string but found no more tokens`);
   }
-  return {
-    value: next.value,
-    context
-  };
+  return next.value;
 };
 
 export type Parser<T> = (
   tokens: Iterator<string>,
-  context: ClosedContext
+  variables: ParentScope
 ) => ParserResult<T>;
 
-export type OpenContext = { readonly variables: { [key: string]: unknown } };
-
-export type ClosedContext = OpenContext & {
-  variables: Readonly<OpenContext["variables"]>;
-};
-
-export type ParserResult<T> = {
-  value: T;
-  context: ClosedContext;
-};
+export type ParserResult<T> = T;
