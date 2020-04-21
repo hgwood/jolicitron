@@ -22,8 +22,6 @@ const args = yargs
 const input = fs.readFileSync(args.input).toString();
 const schema = JSON.parse(fs.readFileSync(args.schema).toString()) as unknown;
 const output = jolicitron(
-  // TODO: validate schema
-  // @ts-ignore
   schema,
   input
 );

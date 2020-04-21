@@ -107,6 +107,8 @@ export type ExplicitArrayPropertySchema = [string, string, Schema];
 
 export type ArraySchema = {
   length: string;
+  // FIXME: the following two lines allow for contradicting 'type' and 'items'
+  // eg { length: "length", type: "number", items: "string" }
   type?: "number" | "string" | "array";
   items?: Schema;
 };
