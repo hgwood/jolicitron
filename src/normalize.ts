@@ -3,8 +3,7 @@ import {
   NormalObjectSchema,
   NormalPropertySchema,
   NormalArraySchema,
-  NormalStringSchema,
-  NormalNumberSchema
+  NormalStringSchema
 } from "./compile";
 
 export const normalize = (schema: Schema): NormalSchema => {
@@ -77,13 +76,7 @@ const normalizeArraySchema = (schema: ArraySchema): NormalArraySchema => {
   }
 };
 
-export type Schema =
-  | ObjectSchema
-  | ArraySchema
-  | NumberSchema
-  | NormalStringSchema
-  | "number"
-  | "string";
+export type Schema = ObjectSchema | ArraySchema | NumberSchema | StringSchema;
 
 export type ObjectSchema =
   | {
@@ -93,15 +86,32 @@ export type ObjectSchema =
   | PropertySchema[];
 
 export type PropertySchema =
-  | { name: string; value: Schema }
-  | string
-  | [string, string]
-  | [string, string, Schema];
+  | ExplicitPropertySchema
+  | NumberPropertySchema
+  | ArrayOfNumberPropertySchema
+  | ArrayPropertySchema;
+
+type ExplicitPropertySchema = {
+  name: string;
+  value: Schema;
+};
+
+type NumberPropertySchema = string;
+
+type ArrayOfNumberPropertySchema = [string, string];
+
+type ArrayPropertySchema = [string, string, Schema];
 
 export type ArraySchema = {
-  length: NormalArraySchema["length"];
+  length: string;
   type?: "number" | "string" | "array";
   items?: Schema;
 };
 
-export type NumberSchema = Partial<NormalNumberSchema>;
+export type NumberSchema =
+  | {
+      type?: "number";
+    }
+  | "number";
+
+type StringSchema = { type: "string" } | "string";
