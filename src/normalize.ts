@@ -3,19 +3,16 @@ import {
   NormalObjectSchema,
   NormalPropertySchema,
   NormalArraySchema,
-  NormalStringSchema,
-  NormalNumberSchema
+  NormalStringSchema
 } from "./compile";
 
 export const normalize = (schema: Schema): NormalSchema => {
-  if (typeof schema === "string") {
+  if (schema === "number" || schema === "string") {
     return { type: schema };
   } else if (Array.isArray(schema) || schema.type === "object") {
     return normalizeObjectSchema(schema);
   } else if ("length" in schema) {
     return normalizeArraySchema(schema);
-  } else if (!schema.type) {
-    return { type: "number" };
   } else {
     return { type: schema.type };
   }
@@ -39,7 +36,7 @@ const normalizePropertySchema = (
   schema: PropertySchema
 ): NormalPropertySchema => {
   if (typeof schema === "string") {
-    return { name: schema, value: normalize({}) };
+    return { name: schema, value: normalize("number") };
   } else if (Array.isArray(schema)) {
     const [propertyName, length, itemSchema] = schema;
     return {
@@ -47,7 +44,7 @@ const normalizePropertySchema = (
       value: {
         type: "array",
         length,
-        items: normalize(itemSchema || {})
+        items: normalize(itemSchema || "number")
       }
     };
   } else {
@@ -72,36 +69,56 @@ const normalizeArraySchema = (schema: ArraySchema): NormalArraySchema => {
     return {
       type: "array",
       length: schema.length,
-      items: normalize(schema.items || {})
+      items: normalize(schema.items || "number")
     };
   }
 };
 
-export type Schema =
-  | ObjectSchema
-  | ArraySchema
-  | NumberSchema
-  | NormalStringSchema
-  | "number"
-  | "string";
+export type Schema = ObjectSchema | ArraySchema | NumberSchema | StringSchema;
 
-export type ObjectSchema =
-  | {
-      type: "object";
-      properties: PropertySchema[];
-    }
-  | PropertySchema[];
+export type ObjectSchema = ExplicitObjectSchema | ImplicitObjectSchema;
+
+export type ExplicitObjectSchema = {
+  type: "object";
+  properties: PropertySchema[];
+};
+
+export type ImplicitObjectSchema = PropertySchema[];
 
 export type PropertySchema =
-  | { name: string; value: Schema }
-  | string
-  | [string, string]
-  | [string, string, Schema];
+  | ExplicitPropertySchema
+  | NumberPropertySchema
+  | ArrayPropertySchema;
+
+export type ExplicitPropertySchema = {
+  name: string;
+  value: Schema;
+};
+
+export type NumberPropertySchema = string;
+
+export type ArrayPropertySchema =
+  | ArrayOfNumberPropertySchema
+  | ExplicitArrayPropertySchema;
+
+export type ArrayOfNumberPropertySchema = [string, string];
+
+export type ExplicitArrayPropertySchema = [string, string, Schema];
 
 export type ArraySchema = {
-  length: NormalArraySchema["length"];
+  length: string;
   type?: "number" | "string" | "array";
   items?: Schema;
 };
 
-export type NumberSchema = Partial<NormalNumberSchema>;
+export type NumberSchema = ExplicitNumberSchema | ShortNumberSchema;
+
+export type ExplicitNumberSchema = { type: "number" };
+
+export type ShortNumberSchema = "number";
+
+export type StringSchema = ExplicitStringSchema | ShortStringSchema;
+
+export type ExplicitStringSchema = { type: "string" };
+
+export type ShortStringSchema = "string";
