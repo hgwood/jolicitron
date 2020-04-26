@@ -1,7 +1,7 @@
 import { compile } from "./compile";
 import { Schema, normalize } from "./normalize";
 import { tokenize } from "./tokenize";
-import { typecheckSchema } from "./validate";
+import { typecheckSchema } from "./typecheck";
 
 export default (schema: unknown, input: string) => {
   const validSchema = typecheckSchema(schema);

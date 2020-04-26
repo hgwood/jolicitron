@@ -2,7 +2,7 @@ import fs from "fs";
 import { compile } from "../src/compile";
 import { normalize } from "../src/normalize";
 import { tokenize } from "../src/tokenize";
-import { typecheckSchema } from "../src/validate";
+import { typecheckSchema } from "../src/typecheck";
 
 const [, , schemaFile, inputFile] = process.argv;
 
