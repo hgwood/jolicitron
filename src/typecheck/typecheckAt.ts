@@ -24,7 +24,7 @@ export function typecheckSchemaAt(schema: unknown, path: Path): Schema {
       return typecheckExplicitNumberOrExplicitStringSchemaAt(schema, path);
     } else {
       throw error({
-        expected: ["a 'type' property", "a 'length' property"],
+        expected: [expectProperty("type"), expectProperty("length")],
         actual: schema,
         path
       });
@@ -82,7 +82,7 @@ function typecheckArraySchemaAt(
       result.type = schema.type;
     } else {
       throw error({
-        expected: ["number", "string", "array"],
+        expected: ['"number"', '"string"', '"array"'],
         actual: schema.type,
         path: push(path, "type")
       });
@@ -98,6 +98,13 @@ function typecheckImplicitObjectSchemaAt(
   schema: unknown[],
   path: Path
 ): ImplicitObjectSchema {
+  return typecheckPropertySchemaArray(schema, path);
+}
+
+function typecheckPropertySchemaArray(
+  schema: unknown[],
+  path: Path
+): PropertySchema[] {
   return schema.map((property, index) =>
     typecheckPropertySchemaAt(property, push(path, index))
   );
@@ -109,7 +116,7 @@ function typecheckExplicitObjectSchemaAt(
 ): ExplicitObjectSchema {
   if (!hasProperty(schema, "properties")) {
     throw error({
-      expected: ["a property 'properties'"],
+      expected: [expectProperty("properties")],
       actual: schema,
       path
     });
@@ -124,8 +131,9 @@ function typecheckExplicitObjectSchemaAt(
   } else {
     return {
       type: schema.type,
-      properties: properties.map((property, index) =>
-        typecheckPropertySchemaAt(property, push(path, index))
+      properties: typecheckPropertySchemaArray(
+        properties,
+        push(path, "properties")
       )
     };
   }
@@ -155,10 +163,10 @@ function typecheckExplicitPropertySchemaAt(
   path: Path
 ): ExplicitPropertySchema {
   if (!hasProperty(schema, "name")) {
-    throw error({ expected: ["a property 'name'"], actual: schema, path });
+    throw error({ expected: [expectProperty("name")], actual: schema, path });
   }
   if (!hasProperty(schema, "value")) {
-    throw error({ expected: ["a property 'value'"], actual: schema, path });
+    throw error({ expected: [expectProperty("value")], actual: schema, path });
   }
   const { name, value } = schema;
   if (typeof name !== "string") {
@@ -205,4 +213,8 @@ function typecheckArrayPropertySchemaAt(
   }
   const itemSchema = typecheckSchemaAt(schema[2], push(path, 2));
   return [name, length, itemSchema];
+}
+
+export function expectProperty(property: string) {
+  return `a '${property}' property`;
 }
