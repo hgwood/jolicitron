@@ -8,13 +8,6 @@ test("string implies type", t => {
   t.end();
 });
 
-test("no type implies number", t => {
-  const actual = normalize({});
-  const expected = { type: "number" };
-  t.deepEqual(actual, expected);
-  t.end();
-});
-
 test("array implies object", t => {
   const actual = normalize([{ name: "myProperty", value: { type: "number" } }]);
   const expected = {
