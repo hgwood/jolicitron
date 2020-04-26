@@ -2,7 +2,7 @@ import fs from "fs";
 import { compile } from "../src/compile";
 import { normalize } from "../src/normalize";
 import { tokenize } from "../src/tokenize";
-import { parseSchema } from "../src/validate";
+import { typecheckSchema } from "../src/validate";
 
 const [, , schemaFile, inputFile] = process.argv;
 
@@ -11,7 +11,7 @@ const input = fs.readFileSync(inputFile).toString();
 
 console.profile("full");
 console.profile("validate");
-const validSchema = parseSchema(schema);
+const validSchema = typecheckSchema(schema);
 console.profileEnd("validate");
 console.profile("normalize");
 const normalSchema = normalize(validSchema);
