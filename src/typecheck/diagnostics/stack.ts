@@ -6,13 +6,11 @@ export type Stack = {
 }[];
 
 export function buildStack(schema: any, path: Path) {
-  const stack = [];
-  const stackPath: Path = [];
-  while (path.length > 0) {
-    stackPath.unshift(path.pop()!);
-    stack.push({ path: [...stackPath], value: getAtPath(schema, [...path]) });
-  }
-  return stack;
+  return Array.from({ length: path.length }, (_, index) => {
+    const pathInsideValue = path.slice(-index - 1);
+    const pathToValue = path.slice(0, -index - 1);
+    return { path: pathInsideValue, value: getAtPath(schema, pathToValue) };
+  });
 }
 
 export function stackToLines(stack: Stack) {
