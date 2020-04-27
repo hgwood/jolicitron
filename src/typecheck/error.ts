@@ -6,6 +6,28 @@ export function push(path: Path, pathSegment: PathSegment) {
   return [...path, pathSegment];
 }
 
+function getAtPath(root: any, path: Path) {
+  return path.reduce((node, prop) => {
+    return node[prop];
+  }, root);
+}
+
+function pathToString(path: Path) {
+  const stringSegments = path.map((segment) => {
+    const asNumber = Number(segment);
+    if (typeof segment === "number") {
+      return `[${segment}]`;
+    } else if (Number.isInteger(asNumber)) {
+      return `[${segment}]`;
+    } else if (segment.match(/^\w+$/)) {
+      return `.${segment}`;
+    } else {
+      return `["${segment}"]`;
+    }
+  });
+  return ["$", ...stringSegments].join("");
+}
+
 export type TypeCheckingError = {
   expected: unknown[];
   actual: unknown;
@@ -52,26 +74,4 @@ export function stackToLines(stack: Stack) {
     ({ path, value }) =>
       `at ${pathToString(path)} in '${JSON.stringify(value, null, 2)}'`
   );
-}
-
-function getAtPath(schema: any, path: Path) {
-  return path.reduce((acc, e) => {
-    return acc[e];
-  }, schema);
-}
-
-function pathToString(path: Path) {
-  const stringSegments = path.map((segment) => {
-    const asNumber = Number(segment);
-    if (typeof segment === "number") {
-      return `[${segment}]`;
-    } else if (Number.isInteger(asNumber)) {
-      return `[${segment}]`;
-    } else if (segment.match(/^\w+$/)) {
-      return `.${segment}`;
-    } else {
-      return `["${segment}"]`;
-    }
-  });
-  return ["$", ...stringSegments].join("");
 }
