@@ -7,10 +7,10 @@ import {
   ExplicitObjectSchema,
   PropertySchema,
   ExplicitPropertySchema,
-  ArrayPropertySchema
+  ArrayPropertySchema,
 } from "../normalize";
 import { isArray, isRecord, hasTypeProperty, hasProperty } from "./guards";
-import { error, Path, push } from "./error";
+import { error, Path, push } from "./diagnostics";
 
 export function typecheckSchemaAt(schema: unknown, path: Path): Schema {
   if (isArray(schema)) {
@@ -26,7 +26,7 @@ export function typecheckSchemaAt(schema: unknown, path: Path): Schema {
       throw error({
         expected: [expectProperty("type"), expectProperty("length")],
         actual: schema,
-        path
+        path,
       });
     }
   } else if (schema === "number" || schema === "string") {
@@ -35,7 +35,7 @@ export function typecheckSchemaAt(schema: unknown, path: Path): Schema {
     throw error({
       expected: ["object", "array", '"number"', '"string"'],
       actual: schema,
-      path
+      path,
     });
   }
 }
@@ -55,7 +55,7 @@ function typecheckExplicitNumberOrExplicitStringSchemaAt(
     throw error({
       expected: ['"string"', '"number"'],
       actual: schema.type,
-      path: push(path, "type")
+      path: push(path, "type"),
     });
   }
 }
@@ -69,7 +69,7 @@ function typecheckArraySchemaAt(
     throw error({
       expected: ["string"],
       actual: length,
-      path: push(path, "length")
+      path: push(path, "length"),
     });
   }
   const result: ArraySchema = { length };
@@ -84,7 +84,7 @@ function typecheckArraySchemaAt(
       throw error({
         expected: ['"number"', '"string"', '"array"'],
         actual: schema.type,
-        path: push(path, "type")
+        path: push(path, "type"),
       });
     }
   }
@@ -118,7 +118,7 @@ function typecheckExplicitObjectSchemaAt(
     throw error({
       expected: [expectProperty("properties")],
       actual: schema,
-      path
+      path,
     });
   }
   const { properties } = schema;
@@ -126,7 +126,7 @@ function typecheckExplicitObjectSchemaAt(
     throw error({
       expected: ["array"],
       actual: properties,
-      path: push(path, "properties")
+      path: push(path, "properties"),
     });
   } else {
     return {
@@ -134,7 +134,7 @@ function typecheckExplicitObjectSchemaAt(
       properties: typecheckPropertySchemaArray(
         properties,
         push(path, "properties")
-      )
+      ),
     };
   }
 }
@@ -153,7 +153,7 @@ function typecheckPropertySchemaAt(
     throw error({
       expected: ["object", "array", "string"],
       actual: schema,
-      path
+      path,
     });
   }
 }
@@ -173,12 +173,12 @@ function typecheckExplicitPropertySchemaAt(
     throw error({
       expected: ["string"],
       actual: name,
-      path: push(path, "name")
+      path: push(path, "name"),
     });
   }
   return {
     name,
-    value: typecheckSchemaAt(value, push(path, "value"))
+    value: typecheckSchemaAt(value, push(path, "value")),
   };
 }
 
@@ -190,7 +190,7 @@ function typecheckArrayPropertySchemaAt(
     throw error({
       expected: [2, 3],
       actual: schema.length,
-      path: push(path, "length")
+      path: push(path, "length"),
     });
   }
   const [name, length] = schema;
@@ -198,14 +198,14 @@ function typecheckArrayPropertySchemaAt(
     throw error({
       expected: ["string"],
       actual: name,
-      path: push(path, 0)
+      path: push(path, 0),
     });
   }
   if (typeof length !== "string") {
     throw error({
       expected: ["string"],
       actual: length,
-      path: push(path, 1)
+      path: push(path, 1),
     });
   }
   if (schema.length === 2) {

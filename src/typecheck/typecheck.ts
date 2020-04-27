@@ -1,6 +1,6 @@
 import { Schema } from "../normalize";
 import { typecheckSchemaAt } from "./typecheckAt";
-import { buildErrorMessage } from "./error";
+import { buildErrorMessage } from "./diagnostics";
 
 export function typecheckSchema(schema: unknown): Schema {
   try {

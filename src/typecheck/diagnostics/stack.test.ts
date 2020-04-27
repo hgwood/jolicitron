@@ -1,5 +1,5 @@
 import { test } from "tap";
-import { buildStack, stackToLines } from "./error";
+import { buildStack, stackToLines } from "./stack";
 
 test("empty stack", (t) => {
   const expected: unknown[] = [];
