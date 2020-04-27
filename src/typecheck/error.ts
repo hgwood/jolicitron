@@ -23,29 +23,35 @@ export function buildErrorMessage(
   { expected, actual, path }: TypeCheckingError,
   schema: unknown
 ) {
-  const stack = buildStack(schema, path);
+  const stringifiedStack = stackToLines(buildStack(schema, path));
   const stringifiedExpected = expected.join(" or ");
   const stringifiedActual = JSON.stringify(actual, null, 2);
   return [
     `expected ${stringifiedExpected} but found '${stringifiedActual}'`,
-    ...stack
+    ...stringifiedStack,
   ].join("\n");
 }
 
-function buildStack(schema: any, path: Path) {
+type Stack = {
+  path: Path;
+  value: unknown;
+}[];
+
+export function buildStack(schema: any, path: Path) {
   const stack = [];
   const stackPath: Path = [];
   while (path.length > 0) {
     stackPath.unshift(path.pop()!);
-    const stringifiedPath = pathToString([...stackPath]);
-    const stringifiedValue = JSON.stringify(
-      getAtPath(schema, [...path]),
-      null,
-      2
-    );
-    stack.push(`at ${stringifiedPath} in '${stringifiedValue}'`);
+    stack.push({ path: [...stackPath], value: getAtPath(schema, [...path]) });
   }
   return stack;
+}
+
+export function stackToLines(stack: Stack) {
+  return stack.map(
+    ({ path, value }) =>
+      `at ${pathToString(path)} in '${JSON.stringify(value, null, 2)}'`
+  );
 }
 
 function getAtPath(schema: any, path: Path) {
@@ -55,8 +61,17 @@ function getAtPath(schema: any, path: Path) {
 }
 
 function pathToString(path: Path) {
-  const stringSegments = path.map(segment =>
-    typeof segment === "number" ? `[${segment}]` : `.${segment}`
-  );
+  const stringSegments = path.map((segment) => {
+    const asNumber = Number(segment);
+    if (typeof segment === "number") {
+      return `[${segment}]`;
+    } else if (Number.isInteger(asNumber)) {
+      return `[${segment}]`;
+    } else if (segment.match(/^\w+$/)) {
+      return `.${segment}`;
+    } else {
+      return `["${segment}"]`;
+    }
+  });
   return ["$", ...stringSegments].join("");
 }
