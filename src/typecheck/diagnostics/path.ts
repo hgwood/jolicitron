@@ -6,7 +6,7 @@ export function push(path: Path, pathSegment: PathSegment) {
   return [...path, pathSegment];
 }
 
-export function getAtPath(root: any, path: Path) {
+export function getWithin(path: Path, root: any) {
   return path.reduce((node, prop) => {
     return node[prop];
   }, root);

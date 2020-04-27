@@ -1,4 +1,4 @@
-import { Path, getAtPath, pathToString } from "./path";
+import { Path, getWithin, pathToString } from "./path";
 
 export type Stack = {
   path: Path;
@@ -7,9 +7,9 @@ export type Stack = {
 
 export function buildStack(schema: any, path: Path) {
   return Array.from({ length: path.length }, (_, index) => {
-    const pathInsideValue = path.slice(-index - 1);
+    const pathWithinValue = path.slice(-index - 1);
     const pathToValue = path.slice(0, -index - 1);
-    return { path: pathInsideValue, value: getAtPath(schema, pathToValue) };
+    return { path: pathWithinValue, value: getWithin(pathToValue, schema) };
   });
 }
 
