@@ -5,8 +5,8 @@ export function tokenize(input: string): Iterator<string> {
       const { done, value } = matches.next();
       return {
         done,
-        value: value[0]
+        value: value[0],
       };
-    }
+    },
   };
 }
