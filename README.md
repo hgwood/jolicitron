@@ -2,222 +2,245 @@
 
 A library to quickly build parsers for Google Hash Code problem inputs.
 
-![Latest version on npm](https://img.shields.io/npm/v/jolicitron.svg)
-![npm dependencies status](https://img.shields.io/david/hgwood/jolicitron.svg)
-![Total number of downloads on npm](https://img.shields.io/npm/dt/jolicitron.svg)
-
 ## How to use it
 
-Jolicitron is mainly about assigning names to integers. Hash Code problem
-inputs look like this:
+Jolicitron is mainly about assigning names to integers. Hash Code problem inputs
+look like this:
 
 ```
-1 2 3 4
+3 2 4
 3
 4 5
 6 7
 8 9
-10 11 12
+10 11
 ```
 
-Using the problem statement, this can be made sense of, and it needs to be
-parsed into a data structure that has descriptive names. Here's how to do
-that with Jolicitron:
+Using the problem statement, this can be made sense of, and it's useful to parse
+it into a data structure that has descriptive names. For example, say the
+problem is about drones carrying items, and we would like this as an output:
 
-```js
-const jolicitron = require("jolicitron")
-
-const parser = jolicitron((save, n) => [
-  "one", "two", "three", "four",
-  save(),
-  n("pairs", "x", "y"),
-  "ten", "eleven", "twelve"
-])
-const {parsedValue, remaining} = parser(input)
-```
-
-`parsedValue` is then equal to the following:
-
-```
+```json
 {
-  one: 1, two: 2, three: 3, four: 4,
-  pairs: [{x: 4, y: 5}, {x: 6, y: 7}, {x: 8, y: 9}],
-  ten: 10, eleven: 11, twelve: 12,
+  "nsteps": 3,
+  "nitems": 2,
+  "ndrones": 4,
+  "drones": [
+    { "x": 4, "y": 5 },
+    { "x": 6, "y": 7 },
+    { "x": 8, "y": 9 }
+  ],
+  "itemWeights": [10, 11]
 }
 ```
 
-ℹ Since 2.1, jolicitron also supports strings in addition to integer in problem
-inputs.
+Jolicitron can help us do that. But we need to work first. We need to describe
+how the output should look like and it which order its pieces appear in the
+input file. This is done using a what jolicitron calls a schema. It's a JSON
+value that's similar to a JSON Schema. Here's a schema that works for the above
+input:
 
-## Real-world Hash Code examples
-
-Check out the [examples](https://github.com/hgwood/hash-code-parser/tree/master/examples)
-to understand how to use Jolicitron on passed problems.
-
-## Requirements
-
-Jolicitron is written in ECMAScript 2015 so it requires Node 6+.
-
-## API
-
-Jolicitron exports a single function. This function takes a function that
-returns a description of the parser you want to
-build, and returns the actual parser. A parser, in Jolicitron's context, is
-a function that takes a string and returns an object with two
-properties: `parsedValue` is the value that resulted from the parsing
-operation, and `remaining` is the rest of the string that wasn't used.
-
-For example, a parser that would expect two integers and return an array of
-these two integers would work like this:
-
-```js
-const parser = jolicitron(...)
-const {parsedValue, remaining} = parser("41 99 105")
-assert.deepEqual(parsedValue, [41, 99])
-assert.equal(remaining, "105")
-```
-
-Hash Code problem inputs are usually made of a sequence of integers, separated
-by either spaces or new lines. Jolicitron does not care about spaces or new
-lines. It sees the input a sequence of integers, that can be parsed
-individually or grouped. Therefore, the function passed to Jolicitron should
-return an array of description of parsers to use to parse the sequence. The
-first parser in the array will be used to parse the first integer, the
-second parser, the second integer, and so on. The result from each parser is
-expected to be an object, and all these objects are merged together (think
-`Object.assign`) to form the final result.
-
-A description for a parser in the array can be one of 3 things:
-- a string
-- a call to `save`
-- a call to `n`
-
-A string produces a parser that parses one integer, and returns an object that
-associates the string to that integer.
-
-```js
-const parser = jolicitron(() => ["a", "b"])
-const {parsedValue, remaining} = parser("41 99 105")
-assert.deepEqual(parsedValue, {a: 41, b: 99})
-assert.equal(remaining, "105")
-```
-
-`save` and `n` are the parameters passed to the function passed to
-jolicitron.
-
-```js
-jolicitron((save, n) => [...])
-```
-
-They are used to handle collections of things in the input.
-
-Hash Code problem inputs often use the same pattern for collections. The
-length of the collection is given first, and then the collection itself.
-Sometimes the length and the collection are a little more apart. So a system
-to remember values and re-use them later as lengths is required. `save` is
-the way to save values, and `n` is used to parse collections.
-
-`save` is a function. It produces a parser that parses one integer, and
-stores it in a queue. The integer is then available for later use with `n`.
-`save` takes an optional parameter to name the integer. This makes it
-available even after it has been dequeued by `n`.
-
-`n` is a function. It produces a parser that parses many integers into an
-array, then returns an object that associates its first parameter to that
-array. To know exactly how many integer it should parse, `n` dequeues an
-integer from `save`'s queue and uses that. The integer is then thrown away.
-
-```js
-const parser = jolicitron((save, n) => [save(), n("a")])
-const {parsedValue, remaining} = parser("3 1 2 3 4 5")
-assert.deepEqual(parsedValue, {a: [1, 2, 3]})
-assert.equal(remaining, "4 5")
-```
-
-The `length` option of `n` lets you use a named integer instead.
-
-```js
-const parser = jolicitron((save, n) => [
-  save("i"),
-  save(),
-  n("a", {length: "i"})
-])
-const {parsedValue, remaining} = parser("3 4 1 2 3 4 5")
-assert.deepEqual(parsedValue, {a: [1, 2, 3]})
-assert.equal(remaining, "4 5")
-```
-
-`n` throws errors if the queue is empty or if the name is unknown.
-
-`n` can take additional parameters. If those are present, they are used to
-describe how to parse each element of the resulting array, and the description
-of parsers seen before: strings, calls to `n` or calls to `save`.
-
-```js
-const parser = jolicitron((save, n) => [
-  save(),
-  n("x", "a", "b")
-])
-const {parsedValue, remaining} = parser("3 1 2 3 4 5")
-assert.deepEqual(parsedValue, {x: [{a: 1, b: 2}, {a: 3, b: 4}]})
-assert.equal(remaining, "5")
-```
-
-```js
-const parser = jolicitron((save, n) => [
-  save(),
-  n("x",
-    "a",
-    save(),
-    n("b", "k", "l")),
-  "z"
-])
-const {parsedValue, remaining} = parser("2 1 2 3 4 5 6 7 3 8 9 10 11 12 13 14 15 16")
-assert.deepEqual(parsedValue, {
-  x: [
+```json
+{
+  "type": "object",
+  "properties": [
     {
-      a: 1,
-      b: [
-        {k: 3, l: 4},
-        {k: 5, l: 6}
-      ],
+      "name": "nsteps",
+      "value": {
+        "type": "number"
+      }
     },
     {
-      a: 7,
-      b: [
-        {k: 8, l: 9},
-        {k: 10, l: 11},
-        {k: 12, l: 13}
-      ],
+      "name": "nitems",
+      "value": {
+        "type": "number"
+      }
     },
-  ],
-  z: 14,
-})
-assert.equal(remaining, "15 16")
+    {
+      "name": "ndrones",
+      "value": {
+        "type": "number"
+      }
+    },
+    {
+      "name": "drones",
+      "value": {
+        "type": "array",
+        "length": "ndrones",
+        "items": {
+          "type": "object",
+          "properties": [
+            {
+              "name": "x",
+              "value": {
+                "type": "number"
+              }
+            },
+            {
+              "name": "y",
+              "value": {
+                "type": "number"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "items",
+      "value": {
+        "type": "array",
+        "length": "nitems",
+        "items": {
+          "type": "number"
+        }
+      }
+    }
+  ]
+}
 ```
 
-### Options for `n`
+This is a handful, but there's lots of shortcuts that can help write compact
+schemas. Keep on reading for more.
 
-`n` can be given options object as a second parameter: `n("things", {...}, "a", "b", ...)`.
+Once we have schema, we run the following command, given the schema has been
+saved to `schema.json` and the input to `input.txt`:
 
-Possible options are:
-- `length` (string, defaults to undefined): if present, should be the name of
-an integer previously saved, which is used as the length of the array to parse.
-- `indices` (boolean, defaults to `false`): if true, elements of the parsed
-array will have an `index` property denoting their order. This can be useful
-as indices are known to often play the role of IDs in Hash Code problems.
+```sh
+npx jolicitron --schema=schema.json --input=input.txt --output=output.json
+```
+
+And that's it really!
+
+## Writing schemas
+
+Schemas describe both how to read the values in the input file and how to
+arrange them into a JSON structure.
+
+### Basic schemas
+
+Jolicitron reads the input file as a sequence of tokens. Tokens are groups of
+characters that are neither spaces or newlines. Tokens can be parsed into two
+types: `number` or `string`. A schema to parse a single token to a number is `{
+"type": "number" }` or simply `"number"`. Same with `string`. Those basic types
+can be aggregated into objects and arrays.
+
+### Object schemas
+
+A schema describing an object has the following form:
+
+```json
+{
+  "type": "object",
+  "properties": [
+    { "name": "property1", "value": <schema for the property> },
+    ...other properties
+  ]
+}
+```
+
+Notice that `properties` is an array. That's important because this array
+denotes the order in which the properties appear in the input file.
+
+An object schema can be shortened to its `property` array, so this schema:
+
+```json
+[
+  { "name": "property1", "value": <schema for the property> },
+  ...other properties
+]
+```
+
+...is the same as the previous one.
+
+Properties can also be shortened in different ways.
+
+A property of type `number` can be shortened to its property name, so the schema
+`["property1"]` is the same as `[{ "name": "property1", "value": "number" }]`.
+
+Properties that are arrays of numbers can be shortened to `["propertyName",
+"arrayLength"]`. This is expanded to:
+
+```json
+{
+  "name": "propertyName",
+  "value": {
+    "type": "array",
+    "length": "arrayLength",
+    "items": "number"
+  }
+}
+```
+
+A third element can be added to the short array form to specify the item schema.
+For example, `["propertyName", "arrayLength", "string"]` denotes a property that
+is array of string. Note that the third element can be any schema, not just
+simple types.
+
+### Array schemas
+
+A schema describing an array has the following form:
+
+```json
+{
+  "type": "array",
+  "length": <reference to a variable>,
+  "items": <schema for the items of the array>
+}
+```
+
+`length` must be the name of a property in the same object where the array is,
+or a parent object. This property must be of type number, and the number
+collected when reading the input file must denote the length of the array.
+
+Example:
+
+```json
+[
+  "arrayLength",
+  {
+    "name": "arrayProperty",
+    "value": {
+      "type": "array",
+      "length": "arrayLength",
+      ...
+    }
+  }
+]
+```
+
+When writing array schemas, the `type` property may be  omitted (`length` is
+enough to assume the schema is for an array). If `items` is omitted, jolicitron
+assumes an array of numbers.
+
+## Real-world examples
+
+Check out the
+[examples](https://github.com/hgwood/jolicitron/tree/master/examples) to
+understand how to use jolicitron on passed Hash Code problems.
+
+## Command-line interface
+
+TODO
+
+## Programmatic interface
+
+TODO
 
 ## Changelog
 
+- 3.0.0 TODO
 - 2.1.0
   - support for string tokens
-    - ⚠ if your program relies on the fact that string tokens raise errors, then this is actually a breaking change
+    - ⚠ if your program relies on the fact that string tokens raise errors, then
+      this is actually a breaking change
 - 2.0.1
   - documentation fixes
 - 2.0.0
   - *breaking* refactor: made builder parameters positional (see #11)
   - *breaking* refactor: module exports the build function directly (see #10)
-  - *breaking* refactor: `save` and `save.usingName(name)` collapsed into a single `save([name])`
+  - *breaking* refactor: `save` and `save.usingName(name)` collapsed into a
+    single `save([name])`
   - *breaking* refactor: replaced `n.usingName` with `n`'s `length` option
 - 1.1.0
   - `indices` option for `n`
