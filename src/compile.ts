@@ -3,7 +3,7 @@ import {
   Parser,
   parseNumber,
   makeArrayParser,
-  makeObjectParser
+  makeObjectParser,
 } from "./parse";
 
 export const compile = (schema: NormalSchema): Parser<unknown> => {
@@ -20,7 +20,7 @@ export const compile = (schema: NormalSchema): Parser<unknown> => {
 };
 
 const compileObjectSchema = ({
-  properties
+  properties,
 }: NormalObjectSchema): Parser<{ [key: string]: unknown }> => {
   const parsers = properties.map(({ name, value }) => {
     return { name, value: compile(value) };
@@ -30,7 +30,7 @@ const compileObjectSchema = ({
 
 const compileArraySchema = ({
   length,
-  items
+  items,
 }: NormalArraySchema): Parser<unknown[]> => {
   return makeArrayParser(length, compile(items));
 };

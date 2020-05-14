@@ -3,7 +3,7 @@ import {
   NormalObjectSchema,
   NormalPropertySchema,
   NormalArraySchema,
-  NormalStringSchema
+  NormalStringSchema,
 } from "./compile";
 
 export const normalize = (schema: Schema): NormalSchema => {
@@ -22,12 +22,12 @@ const normalizeObjectSchema = (schema: ObjectSchema): NormalObjectSchema => {
   if (Array.isArray(schema)) {
     return normalizeObjectSchema({
       type: "object",
-      properties: schema
+      properties: schema,
     });
   } else {
     return {
       type: "object",
-      properties: schema.properties.map(normalizePropertySchema)
+      properties: schema.properties.map(normalizePropertySchema),
     };
   }
 };
@@ -44,8 +44,8 @@ const normalizePropertySchema = (
       value: {
         type: "array",
         length,
-        items: normalize(itemSchema || "number")
-      }
+        items: normalize(itemSchema || "number"),
+      },
     };
   } else {
     const { name, value } = schema;
@@ -63,13 +63,13 @@ const normalizeArraySchema = (schema: ArraySchema): NormalArraySchema => {
         : // TypeScript seems unable to select the subset of Schema
           // that is correct here. It selects ArraySchema instead of
           // NumberSchema | NormalStringSchema. Hence the cast.
-          normalize({ type: schema.type } as NumberSchema | NormalStringSchema)
+          normalize({ type: schema.type } as NumberSchema | NormalStringSchema),
     });
   } else {
     return {
       type: "array",
       length: schema.length,
-      items: normalize(schema.items || "number")
+      items: normalize(schema.items || "number"),
     };
   }
 };
