@@ -8,6 +8,6 @@ export default (schema: unknown, input: string) => {
   const normalSchema = normalize(validSchema);
   const parser = compile(normalSchema);
   const tokens = tokenize(input);
-  const result = parser(tokens, {});
+  const result = parser(tokens, new Map());
   return result;
 };
