@@ -2,9 +2,13 @@
   "name": "jolicitron",
   "version": "2.1.0",
   "description": "A parser builder for Google Hash Code problem inputs",
+  "bin": {
+    "jolicitron": "./dist/src/cli.js"
+  },
   "scripts": {
     "test": "tap \"src/**/*.test.ts\" \"examples/*/*.test.ts\"",
     "test:watch": "nodemon --watch src/*.ts --exec tape --require ts-node/register \"src/*.test.ts\"",
+    "test:bin": "docker image build --file test/bin/bin.dockerfile .",
     "prettier": "prettier --write \"src/*.ts\" \"examples/*/*.json\"",
     "build": "tsc",
     "build:clean": "rm -r dist",
