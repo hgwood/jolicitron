@@ -1,0 +1,8 @@
+Options:
+  --version  Show version number                                       [boolean]
+  --input    Path to the input file                          [string] [required]
+  --output   Path to the output file                         [string] [required]
+  --schema   Path to the schema file                         [string] [required]
+  --help     Show help                                                 [boolean]
+
+Missing required arguments: input, output, schema
