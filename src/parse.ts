@@ -1,5 +1,3 @@
-import { ParentScope, createScope } from "./scope";
-
 export function makeObjectParser(
   propertyParsers: {
     name: string;
@@ -8,18 +6,18 @@ export function makeObjectParser(
 ): Parser<{ [key: string]: unknown }> {
   return function parseObject(tokens, variables) {
     const result: { [key: string]: unknown } = {};
-    const ownVariables = createScope(variables);
+    const ownVariables = new Map(variables);
     for (const { name, value: parser } of propertyParsers) {
       const value = parser(tokens, ownVariables);
       result[name] = value;
       if (typeof value === "number") {
         // Looks like it could be a length for a future array, lets remember it
-        if (ownVariables.hasOwnProperty(name)) {
+        if (ownVariables.has(name)) {
           console.warn(`WARNING: overriding variable '${name}'`);
-        } else if (variables[name]) {
+        } else if (variables.has(name)) {
           console.warn(`WARNING: shadowing variable '${name}'`);
         }
-        ownVariables[name] = value;
+        ownVariables.set(name, value);
       }
     }
     return result;
@@ -31,10 +29,10 @@ export function makeArrayParser<T>(
   itemParser: Parser<T>
 ): Parser<T[]> {
   return function parseArray(tokens, variables) {
-    const lengthValue = Number(variables[length]);
+    const lengthValue = Number(variables.get(length));
     if (!Number.isSafeInteger(lengthValue) || lengthValue < 0) {
       throw new RangeError(
-        `expected '${length}' to be a safe positive integer but found '${variables[length]}' which evaluated to '${lengthValue}'`
+        `expected '${length}' to be a safe positive integer but found '${variables.get(length)}' which evaluated to '${lengthValue}'`
       );
     }
     const result = [];
@@ -70,7 +68,7 @@ export const parseString: Parser<string> = (tokens, context) => {
 
 export type Parser<T> = (
   tokens: Iterator<string>,
-  variables: ParentScope
+  variables: ReadonlyMap<string, number>
 ) => ParserResult<T>;
 
 export type ParserResult<T> = T;
