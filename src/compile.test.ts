@@ -6,7 +6,7 @@ test("founding a non-number value when expecting a number throws an error", (t) 
     type: "number",
   });
   t.throws(() => {
-    parser(["not a number"][Symbol.iterator](), { variables: {} });
+    parser(["not a number"][Symbol.iterator](), new Map());
   }, RangeError);
   t.end();
 });
@@ -18,7 +18,7 @@ test("refering to unknown variable raises an error", (t) => {
     items: { type: "number" },
   });
   t.throws(() => {
-    parser(["1", "2", "3"][Symbol.iterator](), { variables: {} });
+    parser(["1", "2", "3"][Symbol.iterator](), new Map());
   }, RangeError);
   t.end();
 });
@@ -32,7 +32,7 @@ test("expecting for numbers than there is raises an error", (t) => {
     ],
   });
   t.throws(() => {
-    parser(["1"][Symbol.iterator](), { variables: {} });
+    parser(["1"][Symbol.iterator](), new Map());
   }, RangeError);
   t.end();
 });
@@ -46,7 +46,7 @@ test("expecting for strings than there is raises an error", (t) => {
     ],
   });
   t.throws(() => {
-    parser(["1"][Symbol.iterator](), { variables: {} });
+    parser(["1"][Symbol.iterator](), new Map());
   }, RangeError);
   t.end();
 });

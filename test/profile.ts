@@ -23,7 +23,7 @@ console.profile("tokenize");
 const tokens = tokenize(input);
 console.profileEnd("tokenize");
 console.profile("parse");
-const result = parser(tokens, {});
+const result = parser(tokens, new Map());
 console.profileEnd("parse");
 console.profileEnd("full");
 // only to make sure there is no kind of 'unused code' elimination due to 'result' being unused
