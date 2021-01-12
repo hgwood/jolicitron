@@ -15,9 +15,9 @@ export function makeObjectParser(
       if (typeof value === "number") {
         // Looks like it could be a length for a future array, lets remember it
         if (ownVariables.hasOwnProperty(name)) {
-          // console.warn(`WARNING: overriding variable '${name}'`);
+          console.warn(`WARNING: overriding variable '${name}'`);
         } else if (variables[name]) {
-          // console.warn(`WARNING: shadowing variable '${name}'`);
+          console.warn(`WARNING: shadowing variable '${name}'`);
         }
         ownVariables[name] = value;
       }
