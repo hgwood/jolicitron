@@ -1,6 +1,6 @@
 # Jolicitron
 
-A library to quickly build parsers for Google Hash Code problem inputs.
+A library and CLI to quickly build parsers for Google Hash Code problem inputs.
 
 ## How to use it
 
@@ -151,7 +151,7 @@ An object schema can be shortened to its `property` array, so this schema:
 ]
 ```
 
-...is the same as the previous one.
+...is equivalent to the previous one.
 
 Properties can also be shortened in different ways.
 
@@ -221,15 +221,26 @@ understand how to use jolicitron on passed Hash Code problems.
 
 ## Command-line interface
 
-TODO
+See `npx jolicitron --help`.
 
 ## Programmatic interface
 
-TODO
+```js
+import jolicitron from "jolicitron";
+
+const schema = ["nitems", ["items", "nitems", ["weight"]]];
+const input = "3 1 10 100";
+const result = jolicitron(schema, input);
+console.log(result);
+// logs { nitems: 3, items: [{ weight: 1 }, { weight: 10 }, { weight: 100 }]}
+```
 
 ## Changelog
 
-- 3.0.0 TODO
+- 3.0.0
+  - *breaking* refactor: basically a complete rewrite
+    - new API
+    - orders of magnitude faster
 - 2.1.0
   - support for string tokens
     - ⚠ if your program relies on the fact that string tokens raise errors, then
