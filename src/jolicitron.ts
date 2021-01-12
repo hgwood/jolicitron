@@ -1,5 +1,5 @@
 import { compile } from "./compile";
-import { Schema, normalize } from "./normalize";
+import { normalize } from "./normalize";
 import { tokenize } from "./tokenize";
 import { typecheckSchema } from "./typecheck";
 
