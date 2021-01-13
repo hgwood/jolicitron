@@ -32,7 +32,9 @@ export function makeArrayParser<T>(
     const lengthValue = Number(variables.get(length));
     if (!Number.isSafeInteger(lengthValue) || lengthValue < 0) {
       throw new RangeError(
-        `expected '${length}' to be a safe positive integer but found '${variables.get(length)}' which evaluated to '${lengthValue}'`
+        `expected '${length}' to be a safe positive integer but found '${variables.get(
+          length
+        )}' which evaluated to '${lengthValue}'`
       );
     }
     const result = [];
@@ -44,7 +46,7 @@ export function makeArrayParser<T>(
   };
 }
 
-export const parseNumber: Parser<number> = (tokens, context) => {
+export const parseNumber: Parser<number> = (tokens) => {
   const next = tokens.next();
   if (next.done) {
     throw new RangeError(`expected number but found no more tokens`);
@@ -58,13 +60,30 @@ export const parseNumber: Parser<number> = (tokens, context) => {
   return result;
 };
 
-export const parseString: Parser<string> = (tokens, context) => {
+export const parseString: Parser<string> = (tokens) => {
   const next = tokens.next();
   if (next.done) {
     throw new RangeError(`expected string but found no more tokens`);
   }
   return next.value;
 };
+
+export function makeLengthParser(id: number): Parser<number> {
+  return function parseLength(tokens, variables) {
+    const next = tokens.next();
+    if (next.done) {
+      throw new RangeError(`expected length but found no more tokens`);
+    }
+    const result = Number(next.value);
+    if (!Number.isSafeInteger(result) || result < 0) {
+      throw new RangeError(
+        `expected length (safe positive integer) but found '${next.value}' which evaluated to '${result}'`
+      );
+    }
+    variables.set(name, result);
+    return result;
+  };
+}
 
 export type Parser<T> = (
   tokens: Iterator<string>,
