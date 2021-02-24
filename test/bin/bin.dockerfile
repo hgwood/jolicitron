@@ -16,4 +16,4 @@ RUN npm init -y
 RUN npm install /jolicitron/jolicitron*.tgz
 RUN ./node_modules/.bin/jolicitron 2> actual.txt | echo
 
-RUN cmp actual.txt /jolicitron/test/bin/expected.txt
+RUN /jolicitron/test/bin/test.sh
