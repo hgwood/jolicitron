@@ -32,7 +32,9 @@ export function makeArrayParser<T>(
     const lengthValue = Number(variables.get(length));
     if (!Number.isSafeInteger(lengthValue) || lengthValue < 0) {
       throw new RangeError(
-        `expected '${length}' to be a safe positive integer but found '${variables.get(length)}' which evaluated to '${lengthValue}'`
+        `expected '${length}' to be a safe positive integer but found '${variables.get(
+          length
+        )}' which evaluated to '${lengthValue}'`
       );
     }
     const result = [];
