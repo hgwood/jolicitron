@@ -1,7 +1,7 @@
 import { test } from "tap";
 import { typecheckSchemaAt, expectProperty } from "./typecheckAt";
 
-test("valid schema with all combinations of valid schemas", t => {
+test("valid schema with all combinations of valid schemas", (t) => {
   const schemaIn = {
     // explicit object schema
     type: "object",
@@ -9,7 +9,7 @@ test("valid schema with all combinations of valid schemas", t => {
       // explicit property schema
       {
         name: "property1",
-        value: "number"
+        value: "number",
       },
       // number property
       "property2",
@@ -33,22 +33,22 @@ test("valid schema with all combinations of valid schemas", t => {
       // explicit array schema
       {
         name: "property12",
-        value: { length: "length8", type: "array", items: "number" }
+        value: { length: "length8", type: "array", items: "number" },
       },
       // array of number schema
       { name: "property13", value: { length: "length8", items: "number" } },
       // explicit number
       { name: "property14", value: { type: "number" } },
       // explicit string
-      { name: "property15", value: { type: "string" } }
-    ]
+      { name: "property15", value: { type: "string" } },
+    ],
   };
   const schemaOut = typecheckSchemaAt(schemaIn, []);
   t.deepEqual(schemaOut, schemaIn);
   t.end();
 });
 
-test("explicit property schema, missing name", t => {
+test("explicit property schema, missing name", (t) => {
   const schema = [{}];
   t.throws(
     () => {
@@ -59,7 +59,7 @@ test("explicit property schema, missing name", t => {
   t.end();
 });
 
-test("explicit property schema, missing value", t => {
+test("explicit property schema, missing value", (t) => {
   const schema = [{ name: "name" }];
   t.throws(
     () => {
@@ -70,7 +70,7 @@ test("explicit property schema, missing value", t => {
   t.end();
 });
 
-test("explicit property schema, mistyped name", t => {
+test("explicit property schema, mistyped name", (t) => {
   const schema = [{ name: 1, value: "value" }];
   t.throws(
     () => {
@@ -81,7 +81,7 @@ test("explicit property schema, mistyped name", t => {
   t.end();
 });
 
-test("explicit property schema, mistyped value", t => {
+test("explicit property schema, mistyped value", (t) => {
   const schema = [{ name: "name", value: null }];
   t.throws(
     () => {
@@ -92,7 +92,7 @@ test("explicit property schema, mistyped value", t => {
   t.end();
 });
 
-test("array property schema, not enough elements", t => {
+test("array property schema, not enough elements", (t) => {
   const schema = [[]];
   t.throws(
     () => {
@@ -103,7 +103,7 @@ test("array property schema, not enough elements", t => {
   t.end();
 });
 
-test("array property schema, too much elements", t => {
+test("array property schema, too much elements", (t) => {
   const schema = [[1, 2, 3, 4]];
   t.throws(
     () => {
@@ -114,7 +114,7 @@ test("array property schema, too much elements", t => {
   t.end();
 });
 
-test("array property schema, mistyped name", t => {
+test("array property schema, mistyped name", (t) => {
   const schema = [[1, "length"]];
   t.throws(
     () => {
@@ -125,7 +125,7 @@ test("array property schema, mistyped name", t => {
   t.end();
 });
 
-test("array property schema, mistyped length", t => {
+test("array property schema, mistyped length", (t) => {
   const schema = [["name", 1]];
   t.throws(
     () => {
@@ -136,7 +136,7 @@ test("array property schema, mistyped length", t => {
   t.end();
 });
 
-test("array property schema, mistyped item schema", t => {
+test("array property schema, mistyped item schema", (t) => {
   const schema = [["name", "length", null]];
   t.throws(
     () => {
@@ -147,7 +147,7 @@ test("array property schema, mistyped item schema", t => {
   t.end();
 });
 
-test("implicit object schema, mistyped property schema", t => {
+test("implicit object schema, mistyped property schema", (t) => {
   const schema = [null];
   t.throws(
     () => {
@@ -158,7 +158,7 @@ test("implicit object schema, mistyped property schema", t => {
   t.end();
 });
 
-test("explicit object schema, missing properties", t => {
+test("explicit object schema, missing properties", (t) => {
   const schema = { type: "object" };
   t.throws(
     () => {
@@ -169,7 +169,7 @@ test("explicit object schema, missing properties", t => {
   t.end();
 });
 
-test("explicit object schema, mistyped properties", t => {
+test("explicit object schema, mistyped properties", (t) => {
   const schema = { type: "object", properties: null };
   t.throws(
     () => {
@@ -180,7 +180,7 @@ test("explicit object schema, mistyped properties", t => {
   t.end();
 });
 
-test("explicit object schema, mistyped property schema", t => {
+test("explicit object schema, mistyped property schema", (t) => {
   const schema = { type: "object", properties: [null] };
   t.throws(
     () => {
@@ -189,13 +189,13 @@ test("explicit object schema, mistyped property schema", t => {
     {
       expected: ["object", "array", "string"],
       actual: schema.properties[0],
-      path: ["properties", 0]
+      path: ["properties", 0],
     }
   );
   t.end();
 });
 
-test("array schema, mistyped length", t => {
+test("array schema, mistyped length", (t) => {
   const schema = { length: 1 };
   t.throws(
     () => {
@@ -206,7 +206,7 @@ test("array schema, mistyped length", t => {
   t.end();
 });
 
-test("array schema, misvalued type", t => {
+test("array schema, misvalued type", (t) => {
   const schema = { length: "length", type: "not a type" };
   t.throws(
     () => {
@@ -215,13 +215,13 @@ test("array schema, misvalued type", t => {
     {
       expected: ['"number"', '"string"', '"array"'],
       actual: schema.type,
-      path: ["type"]
+      path: ["type"],
     }
   );
   t.end();
 });
 
-test("array schema, mistyped item schema", t => {
+test("array schema, mistyped item schema", (t) => {
   const schema = { length: "length", type: "string", items: null };
   t.throws(
     () => {
@@ -230,13 +230,13 @@ test("array schema, mistyped item schema", t => {
     {
       expected: ["object", "array", '"number"', '"string"'],
       actual: schema.items,
-      path: ["items"]
+      path: ["items"],
     }
   );
   t.end();
 });
 
-test("unknown record-like schema, misvalued type", t => {
+test("unknown record-like schema, misvalued type", (t) => {
   const schema = { type: "not a type" };
   t.throws(
     () => {
@@ -245,13 +245,13 @@ test("unknown record-like schema, misvalued type", t => {
     {
       expected: ['"string"', '"number"'],
       actual: schema.type,
-      path: ["type"]
+      path: ["type"],
     }
   );
   t.end();
 });
 
-test("unknown record-like schema, no type and no length", t => {
+test("unknown record-like schema, no type and no length", (t) => {
   const schema = {};
   t.throws(
     () => {
@@ -260,13 +260,13 @@ test("unknown record-like schema, no type and no length", t => {
     {
       expected: [expectProperty("type"), expectProperty("length")],
       actual: schema,
-      path: []
+      path: [],
     }
   );
   t.end();
 });
 
-test("unknown schema", t => {
+test("unknown schema", (t) => {
   const schema = null;
   t.throws(
     () => {
@@ -275,7 +275,7 @@ test("unknown schema", t => {
     {
       expected: ["object", "array", '"number"', '"string"'],
       actual: schema,
-      path: []
+      path: [],
     }
   );
   t.end();

@@ -121,9 +121,9 @@ arrange them into a JSON structure.
 
 Jolicitron reads the input file as a sequence of tokens. Tokens are groups of
 characters that are neither spaces or newlines. Tokens can be parsed into two
-types: `number` or `string`. A schema to parse a single token to a number is `{
-"type": "number" }` or simply `"number"`. Same with `string`. Those basic types
-can be aggregated into objects and arrays.
+types: `number` or `string`. A schema to parse a single token to a number is
+`{ "type": "number" }` or simply `"number"`. Same with `string`. Those basic
+types can be aggregated into objects and arrays.
 
 ### Object schemas
 
@@ -158,8 +158,7 @@ Properties can also be shortened in different ways.
 A property of type `number` can be shortened to its property name, so the schema
 `["property1"]` is the same as `[{ "name": "property1", "value": "number" }]`.
 
-Properties that are arrays of numbers can be shortened to `["propertyName",
-"arrayLength"]`. This is expanded to:
+Properties that are arrays of numbers can be shortened to `["propertyName", "arrayLength"]`. This is expanded to:
 
 ```json
 {
@@ -209,7 +208,7 @@ Example:
 ]
 ```
 
-When writing array schemas, the `type` property may be  omitted (`length` is
+When writing array schemas, the `type` property may be omitted (`length` is
 enough to assume the schema is for an array). If `items` is omitted, jolicitron
 assumes an array of numbers.
 
@@ -238,7 +237,7 @@ console.log(result);
 ## Changelog
 
 - 3.0.0
-  - *breaking* refactor: basically a complete rewrite
+  - _breaking_ refactor: basically a complete rewrite
     - new API
     - orders of magnitude faster
 - 2.1.0
@@ -248,11 +247,11 @@ console.log(result);
 - 2.0.1
   - documentation fixes
 - 2.0.0
-  - *breaking* refactor: made builder parameters positional (see #11)
-  - *breaking* refactor: module exports the build function directly (see #10)
-  - *breaking* refactor: `save` and `save.usingName(name)` collapsed into a
+  - _breaking_ refactor: made builder parameters positional (see #11)
+  - _breaking_ refactor: module exports the build function directly (see #10)
+  - _breaking_ refactor: `save` and `save.usingName(name)` collapsed into a
     single `save([name])`
-  - *breaking* refactor: replaced `n.usingName` with `n`'s `length` option
+  - _breaking_ refactor: replaced `n.usingName` with `n`'s `length` option
 - 1.1.0
   - `indices` option for `n`
 - 1.0.2

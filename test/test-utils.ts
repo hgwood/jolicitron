@@ -8,7 +8,7 @@ export const readTestData = async (
   return [
     await readText(directory, input),
     await readJson(directory, parser),
-    await readJson(directory, expected)
+    await readJson(directory, expected),
   ];
 };
 
