@@ -1,6 +1,6 @@
 {
   "name": "jolicitron",
-  "version": "3.0.2",
+  "version": "3.1.0",
   "description": "A parser builder for Google Hash Code problem inputs",
   "main": "./dist/src/index.js",
   "bin": {
