@@ -9,6 +9,6 @@ test(`pizza example`, async (t) => {
     "pizza-output.json",
   ]);
   const actual = jolicitron(parser, input);
-  t.deepEqual(actual, expected);
+  t.same(actual, expected);
   t.end();
 });

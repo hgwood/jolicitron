@@ -4,7 +4,7 @@ export function test(
 ): string;
 
 export default interface Tap {
-  deepEqual(actual: unknown, expected: unknown): void;
+  same(actual: unknown, expected: unknown): void;
   throws(fn: () => void, expectedError: any): void;
   end(): void;
   test: typeof test;

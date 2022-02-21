@@ -4,7 +4,7 @@ import { normalize } from "./normalize";
 test("string implies type", (t) => {
   const actual = normalize("number");
   const expected = { type: "number" };
-  t.deepEqual(actual, expected);
+  t.same(actual, expected);
   t.end();
 });
 
@@ -14,7 +14,7 @@ test("array implies object", (t) => {
     type: "object",
     properties: [{ name: "myProperty", value: { type: "number" } }],
   };
-  t.deepEqual(actual, expected);
+  t.same(actual, expected);
   t.end();
 });
 
@@ -24,7 +24,7 @@ test("string for a property implies number property", (t) => {
     type: "object",
     properties: [{ name: "myProperty", value: { type: "number" } }],
   };
-  t.deepEqual(actual, expected);
+  t.same(actual, expected);
   t.end();
 });
 
@@ -46,7 +46,7 @@ test("3-tuple for a property implies array property", (t) => {
       },
     ],
   };
-  t.deepEqual(actual, expected);
+  t.same(actual, expected);
   t.end();
 });
 
@@ -68,21 +68,21 @@ test("2-tuple for a property implies number array property", (t) => {
       },
     ],
   };
-  t.deepEqual(actual, expected);
+  t.same(actual, expected);
   t.end();
 });
 
 test("length implies array", (t) => {
   const actual = normalize({ length: "length" }).type;
   const expected = "array";
-  t.deepEqual(actual, expected);
+  t.same(actual, expected);
   t.end();
 });
 
 test("length implies array even if type is specified", (t) => {
   const actual = normalize({ length: "length", type: "number" }).type;
   const expected = "array";
-  t.deepEqual(actual, expected);
+  t.same(actual, expected);
   t.end();
 });
 
@@ -90,7 +90,7 @@ test("type of implied array is implied to be item type", (t) => {
   // @ts-ignore
   const actual = normalize({ length: "length", type: "number" }).items?.type;
   const expected = "number";
-  t.deepEqual(actual, expected);
+  t.same(actual, expected);
   t.end();
 });
 
@@ -101,6 +101,6 @@ test("array without item type implies array of number", (t) => {
     length: "length",
     items: { type: "number" },
   };
-  t.deepEqual(actual, expected);
+  t.same(actual, expected);
   t.end();
 });

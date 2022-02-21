@@ -9,6 +9,6 @@ test(`book scanning example`, async (t) => {
     "book-scanning-output.json",
   ]);
   const actual = jolicitron(parser, input);
-  t.deepEqual(actual, expected);
+  t.same(actual, expected);
   t.end();
 });

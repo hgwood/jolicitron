@@ -4,14 +4,14 @@ import { buildStack, stackToLines } from "./stack";
 test("empty stack", (t) => {
   const expected: unknown[] = [];
   const actual = buildStack(null, []);
-  t.deepEqual(actual, expected);
+  t.same(actual, expected);
   t.end();
 });
 
 test("one-level stack", (t) => {
   const expected: unknown[] = [{ path: [0], value: [0] }];
   const actual = buildStack([0], [0]);
-  t.deepEqual(actual, expected);
+  t.same(actual, expected);
   t.end();
 });
 
@@ -44,20 +44,20 @@ test("five-level stack", (t) => {
     },
   ];
   const actual = buildStack(root, [0, "prop", 4, "otherProp", 1]);
-  t.deepEqual(actual, expected);
+  t.same(actual, expected);
   t.end();
 });
 
 test("stackToLines", (t) => {
   t.test("empty stack", (t) => {
-    t.deepEqual(stackToLines([]), []);
+    t.same(stackToLines([]), []);
     t.end();
   });
 
   t.test("one-item stack", (t) => {
     const actual = stackToLines([{ path: [], value: null }]);
     const expected = ["at $ in 'null'"];
-    t.deepEqual(actual, expected);
+    t.same(actual, expected);
     t.end();
   });
 
@@ -79,7 +79,7 @@ test("stackToLines", (t) => {
       "at $.one.two.three in '908'",
       'at $[1000][1000]["one thousand"]["a fourth item just because"] in \'true\'',
     ];
-    t.deepEqual(actual, expected);
+    t.same(actual, expected);
     t.end();
   });
 

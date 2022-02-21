@@ -9,6 +9,6 @@ test(`data center example`, async (t) => {
     "data-center-output.json",
   ]);
   const actual = jolicitron(parser, input);
-  t.deepEqual(actual, expected);
+  t.same(actual, expected);
   t.end();
 });

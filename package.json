@@ -7,7 +7,7 @@
     "jolicitron": "./dist/src/cli.js"
   },
   "scripts": {
-    "test": "tap \"src/**/*.test.ts\" \"examples/*/*.test.ts\"",
+    "test": "tap --ts --no-check-coverage \"src/**/*.test.ts\" \"examples/*/*.test.ts\"",
     "test:watch": "nodemon --watch src/*.ts --exec tape --require ts-node/register \"src/*.test.ts\"",
     "test:bin": "docker image build --file test/bin/bin.dockerfile .",
     "prettier": "prettier --ignore-unknown *",
@@ -25,7 +25,7 @@
     "@types/yargs": "16.0.0",
     "nodemon": "2.0.7",
     "prettier": "2.2.1",
-    "tap": "14.11.0",
+    "tap": "15.1.6",
     "ts-node": "8.10.2",
     "typescript": "3.9.9"
   },

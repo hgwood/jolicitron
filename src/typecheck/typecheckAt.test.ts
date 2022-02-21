@@ -44,7 +44,7 @@ test("valid schema with all combinations of valid schemas", (t) => {
     ],
   };
   const schemaOut = typecheckSchemaAt(schemaIn, []);
-  t.deepEqual(schemaOut, schemaIn);
+  t.same(schemaOut, schemaIn);
   t.end();
 });
 
