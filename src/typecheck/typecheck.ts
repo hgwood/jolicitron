@@ -5,7 +5,7 @@ import { buildErrorMessage } from "./diagnostics";
 export function typecheckSchema(schema: unknown): Schema {
   try {
     return typecheckSchemaAt(schema, []);
-  } catch (err) {
+  } catch (err: any) {
     throw new TypeError(buildErrorMessage(err, schema));
   }
 }
