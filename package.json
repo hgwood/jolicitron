@@ -18,11 +18,11 @@
     "build:full": "npm run build:clean && npm run build"
   },
   "dependencies": {
-    "yargs": "16.2.0"
+    "yargs": "17.3.1"
   },
   "devDependencies": {
     "@types/node": "14.14.31",
-    "@types/yargs": "16.0.0",
+    "@types/yargs": "17.0.8",
     "nodemon": "2.0.15",
     "prettier": "2.5.1",
     "tap": "15.1.6",
