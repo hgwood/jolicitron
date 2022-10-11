@@ -1,29 +1,28 @@
-import { test } from "tap";
+import test from "node:test";
+import assert from "node:assert";
 import { compile } from "./compile";
 
-test("founding a non-number value when expecting a number throws an error", (t) => {
+test("founding a non-number value when expecting a number throws an error", () => {
   const parser = compile({
     type: "number",
   });
-  t.throws(() => {
+  assert.throws(() => {
     parser(["not a number"][Symbol.iterator](), new Map());
   }, RangeError);
-  t.end();
 });
 
-test("refering to unknown variable raises an error", (t) => {
+test("refering to unknown variable raises an error", () => {
   const parser = compile({
     type: "array",
     length: "non existing variable",
     items: { type: "number" },
   });
-  t.throws(() => {
+  assert.throws(() => {
     parser(["1", "2", "3"][Symbol.iterator](), new Map());
   }, RangeError);
-  t.end();
 });
 
-test("expecting for numbers than there is raises an error", (t) => {
+test("expecting for numbers than there is raises an error", () => {
   const parser = compile({
     type: "object",
     properties: [
@@ -31,13 +30,12 @@ test("expecting for numbers than there is raises an error", (t) => {
       { name: "prop2", value: { type: "number" } },
     ],
   });
-  t.throws(() => {
+  assert.throws(() => {
     parser(["1"][Symbol.iterator](), new Map());
   }, RangeError);
-  t.end();
 });
 
-test("expecting for strings than there is raises an error", (t) => {
+test("expecting for strings than there is raises an error", () => {
   const parser = compile({
     type: "object",
     properties: [
@@ -45,8 +43,7 @@ test("expecting for strings than there is raises an error", (t) => {
       { name: "prop2", value: { type: "string" } },
     ],
   });
-  t.throws(() => {
+  assert.throws(() => {
     parser(["1"][Symbol.iterator](), new Map());
   }, RangeError);
-  t.end();
 });
