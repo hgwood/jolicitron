@@ -46,7 +46,7 @@ test("five-level stack", () => {
   assert.deepStrictEqual(actual, expected);
 });
 
-test("stackToLines", () => {
+test("stackToLines", (t) => {
   t.test("empty stack", () => {
     assert.deepStrictEqual(stackToLines([]), []);
   });
