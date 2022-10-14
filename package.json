@@ -7,8 +7,8 @@
     "jolicitron": "./dist/src/cli.js"
   },
   "scripts": {
-    "test": "tap --ts --no-check-coverage \"src/**/*.test.ts\" \"examples/*/*.test.ts\"",
-    "test:watch": "nodemon --watch src/*.ts --exec tape --require ts-node/register \"src/*.test.ts\"",
+    "test": "node --test --loader tsx src/*.test.ts src/**/*.test.ts examples/**/*.test.ts",
+    "test:watch": "nodemon --watch src/*.ts --exec npm test",
     "test:bin": "docker image build --file test/bin/bin.dockerfile .",
     "prettier": "prettier --ignore-unknown *",
     "prettier:write": "npm run prettier -- --write",
@@ -21,16 +21,15 @@
     "yargs": "17.3.1"
   },
   "devDependencies": {
-    "@types/node": "14.18.12",
+    "@types/node": "18.8.4",
     "@types/yargs": "17.0.8",
     "nodemon": "2.0.15",
     "prettier": "2.5.1",
-    "tap": "15.1.6",
-    "ts-node": "10.5.0",
+    "tsx": "3.10.1",
     "typescript": "4.5.5"
   },
   "engines": {
-    "node": ">=12.0.0"
+    "node": ">=18.3.0"
   },
   "keywords": [
     "google",

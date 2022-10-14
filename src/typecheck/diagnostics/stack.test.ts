@@ -1,21 +1,20 @@
-import { test } from "tap";
+import test from "node:test";
+import assert from "node:assert";
 import { buildStack, stackToLines } from "./stack";
 
-test("empty stack", (t) => {
+test("empty stack", () => {
   const expected: unknown[] = [];
   const actual = buildStack(null, []);
-  t.same(actual, expected);
-  t.end();
+  assert.deepStrictEqual(actual, expected);
 });
 
-test("one-level stack", (t) => {
+test("one-level stack", () => {
   const expected: unknown[] = [{ path: [0], value: [0] }];
   const actual = buildStack([0], [0]);
-  t.same(actual, expected);
-  t.end();
+  assert.deepStrictEqual(actual, expected);
 });
 
-test("five-level stack", (t) => {
+test("five-level stack", () => {
   const root = [
     {
       prop: [
@@ -44,24 +43,21 @@ test("five-level stack", (t) => {
     },
   ];
   const actual = buildStack(root, [0, "prop", 4, "otherProp", 1]);
-  t.same(actual, expected);
-  t.end();
+  assert.deepStrictEqual(actual, expected);
 });
 
 test("stackToLines", (t) => {
-  t.test("empty stack", (t) => {
-    t.same(stackToLines([]), []);
-    t.end();
+  t.test("empty stack", () => {
+    assert.deepStrictEqual(stackToLines([]), []);
   });
 
-  t.test("one-item stack", (t) => {
+  t.test("one-item stack", () => {
     const actual = stackToLines([{ path: [], value: null }]);
     const expected = ["at $ in 'null'"];
-    t.same(actual, expected);
-    t.end();
+    assert.deepStrictEqual(actual, expected);
   });
 
-  t.test("five-item stack", (t) => {
+  t.test("five-item stack", () => {
     const actual = stackToLines([
       { path: [], value: null },
       { path: [1, 2, 3], value: 1 },
@@ -79,9 +75,6 @@ test("stackToLines", (t) => {
       "at $.one.two.three in '908'",
       'at $[1000][1000]["one thousand"]["a fourth item just because"] in \'true\'',
     ];
-    t.same(actual, expected);
-    t.end();
+    assert.deepStrictEqual(actual, expected);
   });
-
-  t.end();
 });
